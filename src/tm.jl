@@ -1,19 +1,12 @@
 using ClimateERA
 using JLD2
 
-function ncsaveTm(
-    Tm::Array{<:Real,3},
-    emod::Dict, epar::Dict, ereg::Dict, etime::Dict, proot::Dict
-)
-
-end
-
 function TmDavisz(
     emod::Dict, epar::Dict, ereg::Dict, etime::Dict,
     eroot::Dict, proot::Dict, init::Dict
 );
 
-    ID = split(epar["ID"])[end]; ehr = hrind(emod);
+    ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
     p = erapressure(); np = length(p);
 
     smod,spar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
@@ -23,9 +16,9 @@ function TmDavisz(
     omod,opar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
     zmod,zpar,_,_ = erainitialize(init,modID="dpre",parID="z_air");
 
-    sbase = eravarfolder(spar,ereg,eroot); tbase = eravarfolder(tpar,ereg,eroot);
-    dbase = eravarfolder(dpar,ereg,eroot); hbase = eravarfolder(hpar,ereg,eroot);
-    obase = eravarfolder(opar,ereg,eroot); zbase = eravarfolder(zpar,ereg,eroot);
+    sbase = erarawfolder(spar,ereg,eroot);
+    dbase = erarawfolder(dpar,ereg,eroot);
+    obase = erarawfolder(opar,ereg,eroot);
 
     onc = erarawname(omod,opar,ereg,Date(2019,12));
     zs  = mean(erancread(obase,onc,opar)[:],dims=3);
@@ -42,7 +35,9 @@ function TmDavisz(
         Td = erancread(dbase,erarawname(dmod,dpar,dateii),dpar)[:];
 
         for pii = 1 : np
-            tpar["level"] = pii; hmod["level"] = pii; zmod["level"] = pii;
+            tpar["level"] = pii; tbase = erarawfolder(tpar,ereg,eroot);
+            hmod["level"] = pii; hbase = erarawfolder(hpar,ereg,eroot);
+            zmod["level"] = pii; zbase = erarawfolder(zpar,ereg,eroot);
             Ta[:,:,:,pii] = erancread(tbase,erarawname(tmod,tpar,dateii),tpar)[:];
             sH[:,:,:,pii] = erancread(hbase,erarawname(hmod,hpar,dateii),hpar)[:];
             za[:,:,:,pii] = erancread(zbase,erarawname(zmod,zpar,dateii),zpar)[:];
@@ -59,7 +54,7 @@ function TmDavisz(
 
         end
 
-        ncsaveTm(Tm,emod,epar,ereg,etime,proot)
+        ncsave(Tm,emod,epar,ereg,dateii,proot)
 
     end
 
@@ -74,7 +69,7 @@ function TmDavisp(
     eroot::Dict, proot::Dict, init::Dict
 );
 
-    ID = split(epar["ID"])[end]; ehr = hrind(emod);
+    ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
     p = erapressure(); np = length(p);
 
     smod,spar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
@@ -83,9 +78,9 @@ function TmDavisp(
     hmod,hpar,_,_ = erainitialize(init,modID="mpre",parID="shum");
     pmod,ppar,_,_ = erainitialize(init,modID="dsfc",parID="p_sfc");
 
-    sbase = eravarfolder(spar,ereg,eroot); tbase = eravarfolder(tpar,ereg,eroot);
-    dbase = eravarfolder(dpar,ereg,eroot); hbase = eravarfolder(hpar,ereg,eroot);
-    pbase = eravarfolder(ppar,ereg,eroot);
+    sbase = erarawfolder(spar,ereg,eroot);
+    dbase = erarawfolder(dpar,ereg,eroot);
+    pbase = erarawfolder(ppar,ereg,eroot);
 
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
@@ -100,7 +95,8 @@ function TmDavisp(
         ps = erancread(pbase,erarawname(pmod,ppar,dateii),ppar)[:];
 
         for pii = 1 : np
-            tpar["level"] = pii; hmod["level"] = pii; zmod["level"] = pii;
+            tpar["level"] = pii; tbase = erarawfolder(tpar,ereg,eroot);
+            hmod["level"] = pii; hbase = erarawfolder(hpar,ereg,eroot);
             Ta[:,:,:,pii] = erancread(tbase,erarawname(tmod,tpar,dateii),tpar)[:];
             sH[:,:,:,pii] = erancread(hbase,erarawname(hmod,hpar,dateii),hpar)[:];
         end
@@ -116,7 +112,7 @@ function TmDavisp(
 
         end
 
-        ncsaveTm(Tm,emod,epar,ereg,etime,proot)
+        ncsave(Tm,emod,epar,ereg,etime,proot)
 
     end
 
@@ -131,27 +127,31 @@ function TmBevis(
     eroot::Dict, proot::Dict, init::Dict
 )
 
-    ID = split(epar["ID"])[end]; lat = ereg["lat"]; a,b = calcTmBevisab.(ID,lat);
+    ID = split(epar["ID"],"_")[end]; lat = ereg["lat"]; ehr = hrindy(emod);
+    a,b = calcTmBevisab(ID,lat);
     tmod,tpar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
+    tbase = erarawfolder(tpar,ereg,eroot);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
-    for dateii in datevec
-
+    #for dateii in datevec
+        dateii = datevec[1]
         nhr = ehr * daysinmonth(dateii);
-        Ts = erancread(sbase,erarawname(smod,spar,dateii),spar)[:];
+        Ts = erancread(tbase,erarawname(tmod,tpar,ereg,dateii),tpar)[:]*1;
         Tm = deepcopy(Ts); nlon,nlat,nt = size(Tm);
 
         for it = 1 : nhr, ilat = 1 : nlat, ilon = 1 : nlon
             Tm[ilon,ilat,it] = calcTmBevis(Ts[ilon,ilat,it],a[ilat],b[ilat]);
         end
 
-        ncsaveTm(Tm,emod,epar,ereg,etime,proot)
+        #ncsave(Tm,emod,epar,ereg,etime,proot)
 
-    end
+    #end
 
-    efol = erafolder(emod,epar,ereg,etime,proot);
-    @save "info_par.jld2" emod epar;
-    mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
+    # efol = erafolder(emod,epar,ereg,etime,proot);
+    # @save "info_par.jld2" emod epar;
+    # mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
+
+    return Tm
 
 end
 
@@ -175,7 +175,7 @@ function TmGGOSA(
         glat = erancread(ggosdir,ggosname(dateii),"latitude")[:]*1;
 
         Tm = calcTmGGOSA(gTm,lon,lat,glon,glat);
-        ncsaveTm(Tm,emod,epar,ereg,etime,proot);
+        ncsave(Tm,emod,epar,ereg,etime,proot);
 
     end
 
@@ -189,15 +189,16 @@ function TmGPT2w(
     emod::Dict, epar::Dict, ereg::Dict, etime::Dict, proot::Dict
 )
 
-    ID = split(epar["ID"])[end]; lon = ereg["lon"]; lat = ereg["lat"]; ehr = hrstep(emod);
+    ID = split(epar["ID"],"_")[end];
+    lon = ereg["lon"]; lat = ereg["lat"]; ehr = hrstep(emod);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
     zmod,zpar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
-    zbase = eravarfolder(zpar,ereg,eroot); znc = erarawname(zmod,zpar,ereg,Date(2019,12));
+    zbase = erarawfolder(zpar,ereg,eroot); znc = erarawname(zmod,zpar,ereg,Date(2019,12));
     zs = mean(erancread(zbase,znc,zpar)[:],dims=3); nlon,nlat = size(zs);
 
     for dateii in datevec
 
-        Tm = calcTmGPT2w(lon,lat,zs,dateii,ehr); ncsaveTm(Tm,emod,epar,ereg,etime,proot);
+        Tm = calcTmGPT2w(lon,lat,zs,dateii,ehr); ncsave(Tm,emod,epar,ereg,etime,proot);
 
     end
 
