@@ -6,7 +6,7 @@ global_logger(ConsoleLogger(stdout,Logging.Info))
 
 include(srcdir("tm.jl"))
 include(srcdir("pi.jl"))
-include(srcdir("pipwvcommon.jl"))
+include(srcdir("common.jl"))
 
 erawelcome(); addpiparams(); ID = "RE5"
 init,eroot = erastartup(aID=2,dID=1,path="/n/holyscratch01/kuang_lab/nwong/ecmwf/");
