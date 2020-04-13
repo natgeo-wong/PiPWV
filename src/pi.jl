@@ -16,7 +16,7 @@ function PiTm(
 
         Tm = erancread(tbase,erarawname(tmod,tpar,dateii),tpar)[:];
         Pi = calcTm2Pi.(Tm);
-        ncsavePi(Pi,emod,epar,ereg,etime,proot)
+        ncsave(Pi,emod,epar,ereg,etime,proot)
 
     end
 
@@ -49,7 +49,7 @@ function PiMN(
             Pi[ilon,ilat,it] = calcPiMN(lat[ilat],zs[ilon,ilat],dvec[it]);
         end
         Pi = calcPiMN(lat,zs,dateii,ehr);
-        ncsavePi(Pi,emod,epar,ereg,etime,proot)
+        ncsave(Pi,emod,epar,ereg,etime,proot)
 
     end
 
@@ -68,17 +68,9 @@ function calcPiMN(
     if abs(lat) > 0; hfac = 1.48; else; hfac = 1.25; end
     dy = yearday(date) - 1 + Hour(date)/24;
 
-    return ( -1 .* sign(lat) * 1.7*10^(-5) .* abs(lat).^hfac - 0.0001 )
-           * cos((dy-28)*2 * pi /365.25)
-           + 0.165 - 1.7*10^(-5) .* abs(lat).^1.65
-           - 2.38 * 10^-6 * zs
+    Pi = (-sign(lat) * 1.7e-5 * abs(lat)^hfac - 0.0001) * cos((dy-28) * 2 * pi / 365.25)
+         + 0.165 - 1.7*10^(-5) * abs(lat)^1.65- 2.38 * 10^-6 * zs
 
-end
-
-function ncsavePi(
-    Pi::Array{<:Real,3},
-    emod::Dict, epar::Dict, ereg::Dict, etime::Dict,
-    eroot::Dict
-)
+    return Pi
 
 end
