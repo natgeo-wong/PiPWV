@@ -12,4 +12,15 @@ function calcTmBevisab(ID::AbstractString,lat::Real)
 
 end
 
+function calcTmBevisab(ID::AbstractString,lat::Vector)
+
+    nlat = length(lat); a = zeros(nlat); b = zeros(nlat);
+    for ii = 1 : nlat
+        a[ii],b[ii] = calcTmBevisab(ID,lat[ii]);
+    end
+
+    return a,b
+
+end
+
 calcTmBevis(Ts::Real,a::Real,b::Real) = a + b * Ts
