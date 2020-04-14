@@ -58,8 +58,6 @@ function TmDavisz(
 
         end
 
-        Ta = []; Ts = []; Td = []; sH = []; za = [];
-
         @info "$(Dates.now()) - Saving Davis Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)
 
@@ -92,7 +90,7 @@ function TmDavisp(
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
-    Taii = zeros(np); sHii = zero(np);
+    Taii = zeros(np); sHii = zeros(np);
 
     for dtii in datevec
 
@@ -120,12 +118,10 @@ function TmDavisp(
                 Taii[ip] = Ta[ilon,ilat,it,ip]; sHii[ip] = sH[ilon,ilat,it,ip];
             end
 
-            Tmpre = calcTmDavispd(p,Taii,Tsii,Tdii,sHii); Tmpre[1] = 0;
+            Tmpre = calcTmDavispd(psii,p,Taii,Tsii,Tdii,sHii); Tmpre[1] = 0;
             Tm[ilon,ilat,it] = calcTmsfcp(Tmpre,psii,p);
 
         end
-
-        Ta = []; Ts = []; Td = []; sH = []; ps = [];
 
         @info "$(Dates.now()) - Saving Davis Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)

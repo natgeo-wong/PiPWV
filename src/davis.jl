@@ -4,6 +4,7 @@ using Dierckx
 calcTd2e(Td::Real) = 6.1078 * exp((2.5e6/461.51) * (1/273.16 - 1/Td))
 
 function calcTmDavispd(
+    ps::Real,
     p::Vector{<:Real},
     Ta::Vector{<:Real},
     Ts::Real,
@@ -14,7 +15,7 @@ function calcTmDavispd(
     e = p .* sH ./ ((1 .- sH) * (287.05/461.51) .+ sH);
     e38 = calcTd2e(Td); append!(e,e38); Ta = vcat(Ta,Ts);
 
-    if ps >= p[end]; p = vcat(p,ps); else; p = vcat(p,1012.35); end
+    if ps > p[end]; p = vcat(p,ps); else; p = vcat(p,1012.35); end
     top = e ./ p; bot = e ./ (p .* Ta);
 
     return cumul_integrate(p,top) ./ cumul_integrate(p,bot);
