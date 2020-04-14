@@ -45,7 +45,7 @@ function calcTmsfcz(
 )
 
     if zs >= za[37]; zs = za[37] - 287.05 * Ts * log(1.01235); end;
-    za = vcat(za,zs); spl = Spline1D(za,Tm); return spl(zs)
+    za = reverse(vcat(za,zs)); spl = Spline1D(za,reverse(Tm)); return spl(zs)
 
 end
 
