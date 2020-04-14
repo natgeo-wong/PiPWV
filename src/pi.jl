@@ -13,8 +13,13 @@ function PiTm(
 
     for dtii in datevec
 
+        @info "$(Dates.now()) - Extracting Tm data ..."
         Tm = erarawread(tmod,tpar,ereg,eroot,dtii);
+
+        @info "$(Dates.now()) - Calculating Askne and Nodius [1985] Pi data for $(dtii) ..."
         Pi = calcTm2Pi.(Tm);
+
+        @info "$(Dates.now()) - Saving Askne and Nodius [1985] Pi data for $(dtii) ..."
         erarawsave(Pi,emod,epar,ereg,dtii,proot)
 
     end
@@ -33,7 +38,7 @@ function PiMN(
 )
 
     nlon = ereg["size"][1]; nlat = ereg["size"][2];
-    lat = ereg["lat"]; ehr = hrind(emod);
+    lat = ereg["lat"]; ehr = hrindy(emod);
 
     global_logger(ConsoleLogger(stdout,Logging.Warn))
     zmod,zpar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
@@ -46,15 +51,18 @@ function PiMN(
 
     for dtii in datevec
 
-        date = DateTime(date);
-        dvec = datetime2julian.(collect(date:Hour(ehr):(date+Month(1))));
+        @info "$(Dates.now()) - Preallocating arrays ..."
+        date = DateTime(dtii);
+        dvec = collect(date:Hour(24/ehr):(date+Month(1))); pop!(dvec)
         ndt = length(dvec);
         Pi  = zeros(nlon,nlat,ndt)
 
+        @info "$(Dates.now()) - Calculating Manandhar [2017] Pi data for $(dtii) ..."
         for it = 1 : ndt, ilat = 1 : nlat, ilon = 1 : nlon
             Pi[ilon,ilat,it] = calcPiMN(lat[ilat],zs[ilon,ilat],dvec[it]);
         end
-        Pi = calcPiMN(lat,zs,dtii,ehr);
+
+        @info "$(Dates.now()) - Saving Manandhar Pi data for $(dtii) ..."
         erarawsave(Pi,emod,epar,ereg,dtii,proot)
 
     end
@@ -74,7 +82,7 @@ function calcPiMN(
 )
 
     if abs(lat) > 0; hfac = 1.48; else; hfac = 1.25; end
-    dy = yearday(date) - 1 + Hour(date)/24;
+    dy = dayofyear(date) - 1 + hour(date)/24;
 
     Pi = (-sign(lat) * 1.7e-5 * abs(lat)^hfac - 0.0001) * cos((dy-28) * 2 * pi / 365.25)
          + 0.165 - 1.7*10^(-5) * abs(lat)^1.65- 2.38 * 10^-6 * zs
