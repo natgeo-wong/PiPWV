@@ -8,15 +8,14 @@ function PiTm(
 
     ID = split(epar["ID"])[end];
     tmod,tpar,_,_ = erainitialize(init,modID="csfc",parID="t_mwv_$ID");
-    tbase = eravarfolder(tpar,ereg,eroot);
 
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
-    for dateii in datevec
+    for dtii in datevec
 
-        Tm = erancread(tbase,erarawname(tmod,tpar,dateii),tpar)[:];
+        Tm = erarawread(tmod,tpar,ereg,eroot,dtii);
         Pi = calcTm2Pi.(Tm);
-        erarawsave(Pi,emod,epar,ereg,dateii,proot)
+        erarawsave(Pi,emod,epar,ereg,dtii,proot)
 
     end
 
@@ -36,24 +35,27 @@ function PiMN(
     nlon = ereg["size"][1]; nlat = ereg["size"][2];
     lat = ereg["lat"]; ehr = hrind(emod);
 
+    global_logger(ConsoleLogger(stdout,Logging.Warn))
     zmod,zpar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
-    zbase = eravarfolder(zpar,ereg,eroot); znc = erarawname(zmod,zpar,ereg,Date(2019,12));
-    zs = mean(erancread(zbase,znc,zpar)[:],dims=3); zs[zs.<0] = 0;
+    global_logger(ConsoleLogger(stdout,Logging.Info))
+
+    @info "$(Dates.now()) - Extracting surface orography information ..."
+    zs = mean(erarawread(zmod,zpar,ereg,eroot,Date(2019,12)),dims=3);
 
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
-    for dateii in datevec
+    for dtii in datevec
 
         date = DateTime(date);
         dvec = datetime2julian.(collect(date:Hour(ehr):(date+Month(1))));
-        nlon = size(zs,1); nlat = length(lat); ndt = length(dvec);
-        Pi = zeros(nlon,nlat,ndt)
+        ndt = length(dvec);
+        Pi  = zeros(nlon,nlat,ndt)
 
         for it = 1 : ndt, ilat = 1 : nlat, ilon = 1 : nlon
             Pi[ilon,ilat,it] = calcPiMN(lat[ilat],zs[ilon,ilat],dvec[it]);
         end
-        Pi = calcPiMN(lat,zs,dateii,ehr);
-        erarawsave(Pi,emod,epar,ereg,dateii,proot)
+        Pi = calcPiMN(lat,zs,dtii,ehr);
+        erarawsave(Pi,emod,epar,ereg,dtii,proot)
 
     end
 

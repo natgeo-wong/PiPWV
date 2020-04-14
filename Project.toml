@@ -12,7 +12,7 @@ NCDatasets = "85f8d34a-cbdd-5861-8df4-14fed0d494ab"
 NumericalIntegration = "e7bfaba1-d571-5449-8927-abc22e82249b"
 
 [compat]
-ClimateERA = "0.5"
+ClimateERA = "0.6"
 DrWatson = "1"
 NCDatasets = "0.9, 0.10"
 julia = "1"

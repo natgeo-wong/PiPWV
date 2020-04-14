@@ -21,7 +21,7 @@ function TmDavisz(
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
     @info "$(Dates.now()) - Extracting surface orography information ..."
-    zs = mean(erarawread(omod,opar,ereg,eroot,Date(2019,12))[:]*1,dims=3);
+    zs = mean(erarawread(omod,opar,ereg,eroot,Date(2019,12)),dims=3);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
     Taii = zeros(np); sHii = zeros(np); zaii = zeros(np);
 
@@ -33,14 +33,14 @@ function TmDavisz(
         za = zeros(nlon,nlat,nhr,np); Tm = zeros(nlon,nlat,nhr);
 
         @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
-        Ts = erarawread(smod,spar,ereg,eroot,dtii)[:]*1;
-        Td = erarawread(dmod,dpar,ereg,eroot,dtii)[:]*1;
+        Ts = erarawread(smod,spar,ereg,eroot,dtii);
+        Td = erarawread(dmod,dpar,ereg,eroot,dtii);
 
         @info "$(Dates.now()) - Extracting Pressure-Level data for $(dtii) ..."
         for pii = 1 : np; pre = p[pii];
-            tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii)[:]*1;
-            hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii)[:]*1;
-            zpar["level"] = pre; za[:,:,:,pii] = erarawread(zmod,zpar,ereg,eroot,dtii)[:]*1;
+            tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii);
+            hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii);
+            zpar["level"] = pre; za[:,:,:,pii] = erarawread(zmod,zpar,ereg,eroot,dtii);
         end
 
         @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
@@ -100,14 +100,14 @@ function TmDavisp(
         Tm = zeros(nlon,nlat,nhr);
 
         @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
-        Ts = erarawread(smod,spar,ereg,eroot,dtii)[:]*1;
-        Td = erarawread(dmod,dpar,ereg,eroot,dtii)[:]*1;
-        ps = erarawread(pmod,ppar,ereg,eroot,dtii)[:]*1;
+        Ts = erarawread(smod,spar,ereg,eroot,dtii);
+        Td = erarawread(dmod,dpar,ereg,eroot,dtii);
+        ps = erarawread(pmod,ppar,ereg,eroot,dtii);
 
         @info "$(Dates.now()) - Extracting Pressure-Level data for $(dtii) ..."
         for pii = 1 : np; pre = p[pii];
-            tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii)[:]*1;
-            hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii)[:]*1;
+            tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii);
+            hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii);
         end
 
         @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
@@ -158,7 +158,7 @@ function TmBevis(
         nhr = ehr * daysinmonth(dtii);
 
         @info "$(Dates.now()) - Extracting Surface Temperature data for $(dtii) ..."
-        Ts = erarawread(tmod,tpar,ereg,eroot,dtii)[:]*1;
+        Ts = erarawread(tmod,tpar,ereg,eroot,dtii);
         Tm = deepcopy(Ts); nlon,nlat,nt = size(Tm);
 
         @info "$(Dates.now()) - Calculating Bevis Tm data for $(dtii) ..."
@@ -195,9 +195,9 @@ function TmGGOSA(
         tind  = ggostimeii(dtii);
 
         @info "$(Dates.now()) - Extracting GGOS data for $(dtii) ..."
-        gTm  = erancread(ggosdir,ggosname(dtii),"t_mwv")[:,:,tind]*1;
-        glon = erancread(ggosdir,ggosname(dtii),"longitude")[:]*1;
-        glat = erancread(ggosdir,ggosname(dtii),"latitude")[:]*1;
+        gTm  = erancread(ggosdir,ggosname(dtii),"t_mwv")[:,:,tind];
+        glon = erancread(ggosdir,ggosname(dtii),"longitude");
+        glat = erancread(ggosdir,ggosname(dtii),"latitude");
 
         @info "$(Dates.now()) - Interpolating GGOS data to GeoRegion Grid for $(dtii) ..."
         Tm = calcTmGGOSA(gTm,lon,lat,glon,glat);
@@ -229,7 +229,7 @@ function TmGPT2w(
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
     @info "$(Dates.now()) - Extracting surface orography information ..."
-    zs = mean(erarawread(zmod,zpar,ereg,eroot,Date(2019,12))[:]*1,dims=3);
+    zs = mean(erarawread(zmod,zpar,ereg,eroot,Date(2019,12)),dims=3);
     nlon,nlat = size(zs);
 
     for dtii in datevec
