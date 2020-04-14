@@ -44,8 +44,8 @@ function calcTmsfcz(
     Tm::Vector{<:Real}, Ts::Real, zs::Real, za::Vector{<:Real}
 )
 
-    if zs >= za[37]; zs = za[37] - 287.05 * Ts * log(1.01235); end;
-    za = reverse(vcat(za,zs)); spl = Spline1D(za,reverse(Tm)); return spl(zs)
+    if zs >= za[37]; zi = za[37] - 287.05 * Ts * log(1.01235); else; zi = zs;  end;
+    za = reverse(vcat(za,zi)); spl = Spline1D(za,reverse(Tm)); return spl(zs)
 
 end
 
