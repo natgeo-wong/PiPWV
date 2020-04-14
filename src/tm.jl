@@ -58,6 +58,8 @@ function TmDavisz(
 
         end
 
+        Ta = []; Ts = []; Td = []; sH = []; za = [];
+
         @info "$(Dates.now()) - Saving Davis Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)
 
@@ -122,6 +124,8 @@ function TmDavisp(
             Tm[ilon,ilat,it] = calcTmsfcp(Tmpre,psii,p);
 
         end
+
+        Ta = []; Ts = []; Td = []; sH = []; ps = [];
 
         @info "$(Dates.now()) - Saving Davis Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)
