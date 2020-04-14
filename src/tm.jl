@@ -6,6 +6,7 @@ function TmDavisz(
     eroot::Dict, proot::Dict, init::Dict
 );
 
+    @info "$(Dates.now()) - Tm Calculation Method: Davis et al. [1995] in Vertical Coordinates"
     ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
     p = ClimateERA.erapressureload(); np = length(p);
     nlon = ereg["size"][1]; nlat = ereg["size"][2];
@@ -19,12 +20,14 @@ function TmDavisz(
     zmod,zpar,_,_ = erainitialize(init,modID="dpre",parID="z_air");
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
+    @info "$(Dates.now()) - Extracting surface orography information ..."
     zs = mean(erarawread(omod,opar,ereg,eroot,Date(2019,12))[:]*1,dims=3);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
     Taii = zeros(np); sHii = zeros(np); zaii = zeros(np);
 
     for dtii in datevec
 
+        @info "$(Dates.now()) - Preallocating arrays ..."
         nhr = ehr * daysinmonth(dtii);
         Ta = zeros(nlon,nlat,nhr,np); sH = zeros(nlon,nlat,nhr,np);
         za = zeros(nlon,nlat,nhr,np); Tm = zeros(nlon,nlat,nhr);
@@ -73,6 +76,7 @@ function TmDavisp(
     eroot::Dict, proot::Dict, init::Dict
 );
 
+    @info "$(Dates.now()) - Tm Calculation Method: Davis et al. [1995] in Pressure Coordinates"
     ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
     p = ClimateERA.erapressureload(); np = length(p);
     nlon = ereg["size"][1]; nlat = ereg["size"][2];
@@ -90,6 +94,7 @@ function TmDavisp(
 
     for dtii in datevec
 
+        @info "$(Dates.now()) - Preallocating arrays ..."
         nhr = ehr * daysinmonth(dtii);
         Ta = zeros(nlon,nlat,nhr,np); sH = zeros(nlon,nlat,nhr,np);
         Tm = zeros(nlon,nlat,nhr);
@@ -136,11 +141,16 @@ function TmBevis(
     eroot::Dict, proot::Dict, init::Dict
 )
 
+    @info "$(Dates.now()) - Tm Calculation Method: Bevis et al. [1992]"
     ID = split(epar["ID"],"_")[end]; lat = ereg["lat"]; ehr = hrindy(emod);
+
+    @info "$(Dates.now()) - Calculating indices (a,b) ..."
     a,b = calcTmBevisab(ID,lat); a = reshape(a,1,:); b = reshape(b,1,:)
+
     global_logger(ConsoleLogger(stdout,Logging.Warn))
     tmod,tpar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
     global_logger(ConsoleLogger(stdout,Logging.Info))
+
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
     for dtii in datevec
@@ -171,6 +181,7 @@ function TmGGOSA(
     emod::Dict, epar::Dict, ereg::Dict, etime::Dict, proot::Dict
 )
 
+    @info "$(Dates.now()) - Tm Calculation Method: Interpolation from GGOS Atmospheres [Bohm & Schuh, 2013]"
     if emod["datasetID"] != 2
         error("$(Dates.now()) - The GGOS Atmosphere dataset is based on ERA-Interim reanalysis output.  Therefore for comparison purposes the only valid dataset is ERA-Interim.")
     end
@@ -208,12 +219,16 @@ function TmGPT2w(
     emod::Dict, epar::Dict, ereg::Dict, etime::Dict, proot::Dict
 )
 
+    @info "$(Dates.now()) - Tm Calculation Method: Derived from GPT2w [Bohm et al., 2015]"
     ID = split(epar["ID"],"_")[end];
     lon = ereg["lon"]; lat = ereg["lat"]; ehr = hrstep(emod);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
+
     global_logger(ConsoleLogger(stdout,Logging.Warn))
     zmod,zpar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
     global_logger(ConsoleLogger(stdout,Logging.Info))
+
+    @info "$(Dates.now()) - Extracting surface orography information ..."
     zs = mean(erarawread(zmod,zpar,ereg,eroot,Date(2019,12))[:]*1,dims=3);
     nlon,nlat = size(zs);
 
