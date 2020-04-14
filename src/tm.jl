@@ -27,22 +27,25 @@ function TmDavisz(
 
     for dtii in datevec
 
-        # @info "$(Dates.now()) - Preallocating arrays ..."
-        # nhr = ehr * daysinmonth(dtii);
-        # Ta = zeros(nlon,nlat,nhr,np); sH = zeros(nlon,nlat,nhr,np);
-        # za = zeros(nlon,nlat,nhr,np); Tm = zeros(nlon,nlat,nhr);
-        #
-        # @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
-        # Ts = erarawread(smod,spar,ereg,eroot,dtii);
-        # Td = erarawread(dmod,dpar,ereg,eroot,dtii);
-        #
-        # @info "$(Dates.now()) - Extracting Pressure-Level data for $(dtii) ..."
-        # for pii = 1 : np; pre = p[pii];
-        #     tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii);
-        #     hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii);
-        #     zpar["level"] = pre; za[:,:,:,pii] = erarawread(zmod,zpar,ereg,eroot,dtii);
-        # end
-        #
+        @info "$(Dates.now()) - Preallocating arrays ..."
+        nhr = ehr * daysinmonth(dtii);
+        Ta = zeros(nlon,nlat,nhr,np); sH = zeros(nlon,nlat,nhr,np);
+        za = zeros(nlon,nlat,nhr,np); Tm = zeros(nlon,nlat,nhr);
+        varinfo()
+
+        @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
+        Ts = erarawread(smod,spar,ereg,eroot,dtii);
+        Td = erarawread(dmod,dpar,ereg,eroot,dtii);
+        varinfo()
+
+        @info "$(Dates.now()) - Extracting Pressure-Level data for $(dtii) ..."
+        for pii = 1 : np; pre = p[pii];
+            tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii);
+            hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii);
+            zpar["level"] = pre; za[:,:,:,pii] = erarawread(zmod,zpar,ereg,eroot,dtii);
+        end
+        varinfo()
+
         # @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
         # for it = 1 : nhr, ilat = 1 : nlat, ilon = 1 : nlon
         #
@@ -57,18 +60,11 @@ function TmDavisz(
         #     Tm[ilon,ilat,it] = calcTmsfcz(Tmpre,Tsii,zsii,zaii);
         #
         # end
-
-        @info "$(Dates.now()) - Preallocating arrays ..."
-        nhr = ehr * daysinmonth(dtii);
-        Ta = rand(nlon,nlat,nhr,np); sH = rand(nlon,nlat,nhr,np);
-        za = rand(nlon,nlat,nhr,np); Tm = rand(nlon,nlat,nhr);
-
-        @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
-        Ts = rand(nlon,nlat,nhr);
-        Td = rand(nlon,nlat,nhr);
+        # varinfo()
 
         @info "$(Dates.now()) - Saving Davis Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)
+        varinfo()
 
     end
 
