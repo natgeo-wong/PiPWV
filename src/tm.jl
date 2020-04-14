@@ -10,12 +10,14 @@ function TmDavisz(
     p = ClimateERA.erapressureload(); np = length(p);
     nlon = ereg["size"][1]; nlat = ereg["size"][2];
 
+    global_logger(ConsoleLogger(stdout,Logging.Warn))
     smod,spar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
     tmod,tpar,_,_ = erainitialize(init,modID="dpre",parID="t_air");
     dmod,dpar,_,_ = erainitialize(init,modID="msfc",parID="t_dew");
     hmod,hpar,_,_ = erainitialize(init,modID="mpre",parID="shum");
     omod,opar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
     zmod,zpar,_,_ = erainitialize(init,modID="dpre",parID="z_air");
+    global_logger(ConsoleLogger(stdout,Logging.Info))
 
     zs = mean(erarawread(omod,opar,ereg,eroot,Date(2019,12))[:]*1,dims=3);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
@@ -75,11 +77,13 @@ function TmDavisp(
     p = ClimateERA.erapressureload(); np = length(p);
     nlon = ereg["size"][1]; nlat = ereg["size"][2];
 
+    global_logger(ConsoleLogger(stdout,Logging.Warn))
     smod,spar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
     tmod,tpar,_,_ = erainitialize(init,modID="dpre",parID="t_air");
     dmod,dpar,_,_ = erainitialize(init,modID="msfc",parID="t_dew");
     hmod,hpar,_,_ = erainitialize(init,modID="mpre",parID="shum");
     pmod,ppar,_,_ = erainitialize(init,modID="dsfc",parID="p_sfc");
+    global_logger(ConsoleLogger(stdout,Logging.Info))
 
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
     Taii = zeros(np); sHii = zero(np);
@@ -134,7 +138,9 @@ function TmBevis(
 
     ID = split(epar["ID"],"_")[end]; lat = ereg["lat"]; ehr = hrindy(emod);
     a,b = calcTmBevisab(ID,lat); a = reshape(a,1,:); b = reshape(b,1,:)
+    global_logger(ConsoleLogger(stdout,Logging.Warn))
     tmod,tpar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
+    global_logger(ConsoleLogger(stdout,Logging.Info))
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
     for dtii in datevec
@@ -205,7 +211,9 @@ function TmGPT2w(
     ID = split(epar["ID"],"_")[end];
     lon = ereg["lon"]; lat = ereg["lat"]; ehr = hrstep(emod);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
+    global_logger(ConsoleLogger(stdout,Logging.Warn))
     zmod,zpar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
+    global_logger(ConsoleLogger(stdout,Logging.Info))
     zs = mean(erarawread(zmod,zpar,ereg,eroot,Date(2019,12))[:]*1,dims=3);
     nlon,nlat = size(zs);
 
