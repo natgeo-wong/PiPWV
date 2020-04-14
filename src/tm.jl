@@ -53,7 +53,7 @@ function TmDavisz(
                 zaii[ip] = za[ilon,ilat,it,ip];
             end
 
-            Tmpre = calcTmDaviszd(p,Taii,Tsii,Tdii,sHii,zaii,zsii);
+            Tmpre = calcTmDaviszd(p,Taii,Tsii,Tdii,sHii,zaii,zsii); Tmpre[1] = 0;
             Tm[ilon,ilat,it] = calcTmsfcz(Tmpre,Tsii,zsii,zaii);
 
         end
@@ -118,7 +118,7 @@ function TmDavisp(
                 Taii[ip] = Ta[ilon,ilat,it,ip]; sHii[ip] = sH[ilon,ilat,it,ip];
             end
 
-            Tmpre = calcTmDavispd(p,Taii,Tsii,Tdii,sHii);
+            Tmpre = calcTmDavispd(p,Taii,Tsii,Tdii,sHii); Tmpre[1] = 0;
             Tm[ilon,ilat,it] = calcTmsfcp(Tmpre,psii,p);
 
         end
