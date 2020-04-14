@@ -16,13 +16,15 @@ function PiTm(
 
         Tm = erancread(tbase,erarawname(tmod,tpar,dateii),tpar)[:];
         Pi = calcTm2Pi.(Tm);
-        ncsave(Pi,emod,epar,ereg,etime,proot)
+        erarawsave(Pi,emod,epar,ereg,dateii,proot)
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot);
+    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
     @save "info_par.jld2" emod epar;
     mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
+    @save "info_reg.jld2" ereg;
+    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
 
 end
 
@@ -31,11 +33,13 @@ function PiMN(
     eroot::Dict, proot::Dict, init::Dict
 )
 
+    nlon = ereg["size"][1]; nlat = ereg["size"][2];
+    lat = ereg["lat"]; ehr = hrind(emod);
+
     zmod,zpar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
     zbase = eravarfolder(zpar,ereg,eroot); znc = erarawname(zmod,zpar,ereg,Date(2019,12));
     zs = mean(erancread(zbase,znc,zpar)[:],dims=3); zs[zs.<0] = 0;
 
-    lat = ereg["lat"]; ehr = hrind(emod);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
     for dateii in datevec
@@ -49,13 +53,15 @@ function PiMN(
             Pi[ilon,ilat,it] = calcPiMN(lat[ilat],zs[ilon,ilat],dvec[it]);
         end
         Pi = calcPiMN(lat,zs,dateii,ehr);
-        ncsave(Pi,emod,epar,ereg,etime,proot)
+        erarawsave(Pi,emod,epar,ereg,dateii,proot)
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot);
+    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
     @save "info_par.jld2" emod epar;
     mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
+    @save "info_reg.jld2" ereg;
+    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
 
 end
 

@@ -1,14 +1,14 @@
-using GridInterpolations
+using Dierckx
 
 ggosname(date::TimeType) = "GGOS-GLB-t_mwv_GA-sfc-$(Dates.year(date)).nc"
 
 function ggostimeii(date::TimeType)
 
     date = DateTime(date);
-    dvec = datetime2julian.(collect(date:Hour(ehr):(date+Month(1))));
-    pop!(dvec);
+    dvec = datetime2julian.(collect(date:Hour(6):(date+Month(1))));
+    pop!(dvec); nt = length(dvec);
 
-    return (yearday(date)-1)*4 .+ collect(1:nt)
+    return (dayofyear(date)-1)*4 .+ (1:nt)
 
 end
 
@@ -18,16 +18,19 @@ function calcTmGGOSA(
     glon::Vector{<:Real},glat::Vector{<:Real}
 )
 
-    grid = RectangleGrid(glon,glat);
-    Tm = zeros(length(lon),length(lat),size(gTm,3));
+    nlon,nlat,nt = size(gTm)
+    Tm = zeros(length(lon),length(lat),nt);
+    data = zeros(nlon,nlat); out = zeros(length(lon),length(lat))
 
     for it = 1 : size(gTm,3)
 
-        data = @view gTm[:,;,it][:];
-        for ilat = 1 : length(lat), ilon = 1 : length(lon)
-            Tm[ilon,ilat,it] = interpolate(grid,data,[lon[ilon],lat[ilat]]);
-        end
+        data .= reverse(gTm[:,:,it],dims=2);
+        spline = Spline2D(glon,reverse(glat),data)
+        out  .= evalgrid(spline,lon,reverse(lat));
+        Tm[:,:,it] .= reverse(out,dims=2)
 
     end
+
+    return Tm
 
 end

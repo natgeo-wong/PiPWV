@@ -12,11 +12,12 @@ function calcTmDavispd(
 )
 
     e = p .* sH ./ ((1 .- sH) * (287.05/461.51) .+ sH);
-    e38 = calcTd2e(Td); append!(e,e38); append!(Ta,Ts);
+    e38 = calcTd2e(Td); append!(e,e38); Ta = vcat(Ta,Ts);
 
-    append!(p,1012.35); top = e ./ p; bot = e ./ (p .* Ta);
+    if ps >= p[end]; p = vcat(p,ps); else; p = vcat(p,1012.35); end
+    top = e ./ p; bot = e ./ (p .* Ta);
 
-    return cumul_integrate(p,top) ./ bot = cumul_integrate(p,bot);
+    return cumul_integrate(p,top) ./ cumul_integrate(p,bot);
 
 end
 
@@ -31,11 +32,11 @@ function calcTmDaviszd(
 )
 
     e = p .* sH ./ ((1 .- sH) * (287.05/461.51) .+ sH);
-    e38 = calcTd2e(Td); append!(e,e38); append!(Ta,Ts); append!(za,zs);
+    e38 = calcTd2e(Td); append!(e,e38); Ta = vcat(Ta,Ts); za = vcat(za,zs);
 
     top = e ./ Ta; bot = e ./ Ta.^2;
 
-    return cumul_integrate(za,top) ./ bot = cumul_integrate(za,bot);
+    return cumul_integrate(za,top) ./ cumul_integrate(za,bot);
 
 end
 
@@ -43,15 +44,16 @@ function calcTmsfcz(
     Tm::Vector{<:Real}, Ts::Real, zs::Real, za::Vector{<:Real}
 )
 
-    if zs > za[37]; zs = za[37] - 287.05 * Ts * log(1.01235); end;
-    append!(za,zs); spl = Spline1D(za,Tm); return spl(zs)
+    if zs >= za[37]; zs = za[37] - 287.05 * Ts * log(1.01235); end;
+    za = vcat(za,zs); spl = Spline1D(za,Tm); return spl(zs)
 
 end
 
-function calcTmsfcz(
+function calcTmsfcp(
     Tm::Vector{<:Real}, ps::Real, p::Vector{<:Real}
 )
 
-    append!(p,1012.35); spl = Spline1D(p,Tm); return spl(ps)
+    if ps >= p[end]; p = vcat(p,ps); else; p = vcat(p,1012.35); end
+    spl = Spline1D(p,Tm); return spl(ps)
 
 end

@@ -7,7 +7,8 @@ function TmDavisz(
 );
 
     ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
-    p = erapressure(); np = length(p);
+    p = ClimateERA.erapressureload(); np = length(p);
+    nlon = ereg["size"][1]; nlat = ereg["size"][2];
 
     smod,spar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
     tmod,tpar,_,_ = erainitialize(init,modID="dpre",parID="t_air");
@@ -16,51 +17,52 @@ function TmDavisz(
     omod,opar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
     zmod,zpar,_,_ = erainitialize(init,modID="dpre",parID="z_air");
 
-    sbase = erarawfolder(spar,ereg,eroot);
-    dbase = erarawfolder(dpar,ereg,eroot);
-    obase = erarawfolder(opar,ereg,eroot);
-
-    onc = erarawname(omod,opar,ereg,Date(2019,12));
-    zs  = mean(erancread(obase,onc,opar)[:],dims=3);
-
+    zs = mean(erarawread(omod,opar,ereg,eroot,Date(2019,12))[:]*1,dims=3);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
+    Taii = zeros(np); sHii = zeros(np); zaii = zeros(np);
 
-    for dateii in datevec
+    for dtii in datevec
 
-        nhr = ehr * daysinmonth(dateii);
-        Ta = zeros(vcat(ereg["size"],nhr,np)); sH = zeros(vcat(ereg["size"],nhr,np));
-        za = zeros(vcat(ereg["size"],nhr,np)); Tm = zeros(vcat(ereg["size"],nhr));
+        nhr = ehr * daysinmonth(dtii);
+        Ta = zeros(nlon,nlat,nhr,np); sH = zeros(nlon,nlat,nhr,np);
+        za = zeros(nlon,nlat,nhr,np); Tm = zeros(nlon,nlat,nhr);
 
-        Ts = erancread(sbase,erarawname(smod,spar,dateii),spar)[:];
-        Td = erancread(dbase,erarawname(dmod,dpar,dateii),dpar)[:];
+        @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
+        Ts = erarawread(smod,spar,ereg,eroot,dtii)[:]*1;
+        Td = erarawread(dmod,dpar,ereg,eroot,dtii)[:]*1;
 
-        for pii = 1 : np
-            tpar["level"] = pii; tbase = erarawfolder(tpar,ereg,eroot);
-            hmod["level"] = pii; hbase = erarawfolder(hpar,ereg,eroot);
-            zmod["level"] = pii; zbase = erarawfolder(zpar,ereg,eroot);
-            Ta[:,:,:,pii] = erancread(tbase,erarawname(tmod,tpar,dateii),tpar)[:];
-            sH[:,:,:,pii] = erancread(hbase,erarawname(hmod,hpar,dateii),hpar)[:];
-            za[:,:,:,pii] = erancread(zbase,erarawname(zmod,zpar,dateii),zpar)[:];
+        @info "$(Dates.now()) - Extracting Pressure-Level data for $(dtii) ..."
+        for pii = 1 : np; pre = p[pii];
+            tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii)[:]*1;
+            hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii)[:]*1;
+            zpar["level"] = pre; za[:,:,:,pii] = erarawread(zmod,zpar,ereg,eroot,dtii)[:]*1;
         end
 
+        @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
         for it = 1 : nhr, ilat = 1 : nlat, ilon = 1 : nlon
 
-            Taii = @view Ta[ilon,ilat,it,:]; Tsii = Ta[ilon,ilat,it];
-            sHii = @view sH[ilon,ilat,it,:]; Tdii = Td[ilon,ilat,it];
-            zaii = @view za[ilon,ilat,it,:]; zsii = zs[ilon,ilat];
+            Tsii = Ts[ilon,ilat,it]; Tdii = Td[ilon,ilat,it]; zsii = zs[ilon,ilat];
+            for ip = 1 : np
+                Taii[ip] = Ta[ilon,ilat,it,ip];
+                sHii[ip] = sH[ilon,ilat,it,ip];
+                zaii[ip] = za[ilon,ilat,it,ip];
+            end
 
             Tmpre = calcTmDaviszd(p,Taii,Tsii,Tdii,sHii,zaii,zsii);
             Tm[ilon,ilat,it] = calcTmsfcz(Tmpre,Tsii,zsii,zaii);
 
         end
 
-        ncsave(Tm,emod,epar,ereg,dateii,proot)
+        @info "$(Dates.now()) - Saving Davis Tm data for $(dtii) ..."
+        erarawsave(Tm,emod,epar,ereg,dtii,proot)
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot);
+    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
     @save "info_par.jld2" emod epar;
     mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
+    @save "info_reg.jld2" ereg;
+    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
 
 end
 
@@ -70,7 +72,8 @@ function TmDavisp(
 );
 
     ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
-    p = erapressure(); np = length(p);
+    p = ClimateERA.erapressureload(); np = length(p);
+    nlon = ereg["size"][1]; nlat = ereg["size"][2];
 
     smod,spar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
     tmod,tpar,_,_ = erainitialize(init,modID="dpre",parID="t_air");
@@ -78,47 +81,49 @@ function TmDavisp(
     hmod,hpar,_,_ = erainitialize(init,modID="mpre",parID="shum");
     pmod,ppar,_,_ = erainitialize(init,modID="dsfc",parID="p_sfc");
 
-    sbase = erarawfolder(spar,ereg,eroot);
-    dbase = erarawfolder(dpar,ereg,eroot);
-    pbase = erarawfolder(ppar,ereg,eroot);
-
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
+    Taii = zeros(np); sHii = zero(np);
 
-    for dateii in datevec
+    for dtii in datevec
 
-        nhr = ehr * daysinmonth(dateii);
-        Ta = zeros(vcat(ereg["size"],nhr,np)); sH = zeros(vcat(ereg["size"],nhr,np));
-        Tm = zeros(vcat(ereg["size"],nhr));
+        nhr = ehr * daysinmonth(dtii);
+        Ta = zeros(nlon,nlat,nhr,np); sH = zeros(nlon,nlat,nhr,np);
+        Tm = zeros(nlon,nlat,nhr);
 
-        Ts = erancread(sbase,erarawname(smod,spar,dateii),spar)[:];
-        Td = erancread(dbase,erarawname(dmod,dpar,dateii),dpar)[:];
-        ps = erancread(pbase,erarawname(pmod,ppar,dateii),ppar)[:];
+        @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
+        Ts = erarawread(smod,spar,ereg,eroot,dtii)[:]*1;
+        Td = erarawread(dmod,dpar,ereg,eroot,dtii)[:]*1;
+        ps = erarawread(pmod,ppar,ereg,eroot,dtii)[:]*1;
 
-        for pii = 1 : np
-            tpar["level"] = pii; tbase = erarawfolder(tpar,ereg,eroot);
-            hmod["level"] = pii; hbase = erarawfolder(hpar,ereg,eroot);
-            Ta[:,:,:,pii] = erancread(tbase,erarawname(tmod,tpar,dateii),tpar)[:];
-            sH[:,:,:,pii] = erancread(hbase,erarawname(hmod,hpar,dateii),hpar)[:];
+        @info "$(Dates.now()) - Extracting Pressure-Level data for $(dtii) ..."
+        for pii = 1 : np; pre = p[pii];
+            tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii)[:]*1;
+            hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii)[:]*1;
         end
 
+        @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
         for it = 1 : nhr, ilat = 1 : nlat, ilon = 1 : nlon
 
-            Taii = @view Ta[ilon,ilat,it,:]; Tsii = Ta[ilon,ilat,it];
-            sHii = @view sH[ilon,ilat,it,:]; Tdii = Td[ilon,ilat,it];
-            psii = zs[ilon,ilat,it];
+            Tsii = Ts[ilon,ilat,it]; Tdii = Td[ilon,ilat,it]; psii = ps[ilon,ilat,it];
+            for ip = 1 : np
+                Taii[ip] = Ta[ilon,ilat,it,ip]; sHii[ip] = sH[ilon,ilat,it,ip];
+            end
 
             Tmpre = calcTmDavispd(p,Taii,Tsii,Tdii,sHii);
             Tm[ilon,ilat,it] = calcTmsfcp(Tmpre,psii,p);
 
         end
 
-        ncsave(Tm,emod,epar,ereg,etime,proot)
+        @info "$(Dates.now()) - Saving Davis Tm data for $(dtii) ..."
+        erarawsave(Tm,emod,epar,ereg,dtii,proot)
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot);
+    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
     @save "info_par.jld2" emod epar;
     mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
+    @save "info_reg.jld2" ereg;
+    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
 
 end
 
@@ -128,30 +133,31 @@ function TmBevis(
 )
 
     ID = split(epar["ID"],"_")[end]; lat = ereg["lat"]; ehr = hrindy(emod);
-    a,b = calcTmBevisab(ID,lat);
+    a,b = calcTmBevisab(ID,lat); a = reshape(a,1,:); b = reshape(b,1,:)
     tmod,tpar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
-    tbase = erarawfolder(tpar,ereg,eroot);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
-    #for dateii in datevec
-        dateii = datevec[1]
-        nhr = ehr * daysinmonth(dateii);
-        Ts = erancread(tbase,erarawname(tmod,tpar,ereg,dateii),tpar)[:]*1;
+    for dtii in datevec
+
+        nhr = ehr * daysinmonth(dtii);
+
+        @info "$(Dates.now()) - Extracting Surface Temperature data for $(dtii) ..."
+        Ts = erarawread(tmod,tpar,ereg,eroot,dtii)[:]*1;
         Tm = deepcopy(Ts); nlon,nlat,nt = size(Tm);
 
-        for it = 1 : nhr, ilat = 1 : nlat, ilon = 1 : nlon
-            Tm[ilon,ilat,it] = calcTmBevis(Ts[ilon,ilat,it],a[ilat],b[ilat]);
-        end
+        @info "$(Dates.now()) - Calculating Bevis Tm data for $(dtii) ..."
+        Tm = a .+ b .* Ts;
 
-        #ncsave(Tm,emod,epar,ereg,etime,proot)
+        @info "$(Dates.now()) - Saving Bevis Tm data for $(dtii) ..."
+        erarawsave(Tm,emod,epar,ereg,dtii,proot)
 
-    #end
+    end
 
-    # efol = erafolder(emod,epar,ereg,etime,proot);
-    # @save "info_par.jld2" emod epar;
-    # mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
-
-    return Tm
+    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
+    @save "info_par.jld2" emod epar;
+    mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
+    @save "info_reg.jld2" ereg;
+    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
 
 end
 
@@ -167,21 +173,28 @@ function TmGGOSA(
     ID = split(epar["ID"])[end]; lon = ereg["lon"]; lat = ereg["lat"];
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
-    for dateii in datevec
+    for dtii in datevec
 
-        dii  = ggostimeii(dateii);
-        gTm  = erancread(ggosdir,ggosname(dateii),"t_mwv")[:,:,dii];
-        glon = erancread(ggosdir,ggosname(dateii),"longitude")[:]*1;
-        glat = erancread(ggosdir,ggosname(dateii),"latitude")[:]*1;
+        tind  = ggostimeii(dtii);
 
+        @info "$(Dates.now()) - Extracting GGOS data for $(dtii) ..."
+        gTm  = erancread(ggosdir,ggosname(dtii),"t_mwv")[:,:,tind]*1;
+        glon = erancread(ggosdir,ggosname(dtii),"longitude")[:]*1;
+        glat = erancread(ggosdir,ggosname(dtii),"latitude")[:]*1;
+
+        @info "$(Dates.now()) - Interpolating GGOS data to GeoRegion Grid for $(dtii) ..."
         Tm = calcTmGGOSA(gTm,lon,lat,glon,glat);
-        ncsave(Tm,emod,epar,ereg,etime,proot);
+
+        @info "$(Dates.now()) - Saving GGOS Tm data for $(dtii) ..."
+        erarawsave(Tm,emod,epar,ereg,dtii,proot)
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot);
+    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
     @save "info_par.jld2" emod epar;
     mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
+    @save "info_reg.jld2" ereg;
+    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
 
 end
 
@@ -193,17 +206,20 @@ function TmGPT2w(
     lon = ereg["lon"]; lat = ereg["lat"]; ehr = hrstep(emod);
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
     zmod,zpar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
-    zbase = erarawfolder(zpar,ereg,eroot); znc = erarawname(zmod,zpar,ereg,Date(2019,12));
-    zs = mean(erancread(zbase,znc,zpar)[:],dims=3); nlon,nlat = size(zs);
+    zs = mean(erarawread(zmod,zpar,ereg,eroot,Date(2019,12))[:]*1,dims=3);
+    nlon,nlat = size(zs);
 
-    for dateii in datevec
+    for dtii in datevec
 
-        Tm = calcTmGPT2w(lon,lat,zs,dateii,ehr); ncsave(Tm,emod,epar,ereg,etime,proot);
+        Tm = calcTmGPT2w(lon,lat,zs,dtii,ehr);
+        erarawsave(Tm,emod,epar,ereg,dtii,proot);
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot);
+    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
     @save "info_par.jld2" emod epar;
     mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
+    @save "info_reg.jld2" ereg;
+    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
 
 end

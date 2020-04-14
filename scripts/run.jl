@@ -8,9 +8,9 @@ include(srcdir("tm.jl"))
 include(srcdir("pi.jl"))
 include(srcdir("common.jl"))
 
-erawelcome(); addpiparams(); ID = "RE5"
 init,eroot = erastartup(aID=2,dID=1,path="/n/holyscratch01/kuang_lab/nwong/ecmwf/");
 init,proot = erastartup(aID=2,dID=1,path="/n/kuangdss01/lab/ecmwf/",welcome=false);
+addpiparams(); ID = "RE5"
 
 emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)");
 
@@ -23,12 +23,12 @@ elseif any(ID .== ["EBB","EBM"])
 elseif ID == "EG2"
     include(srcdir("gpt2w.jl")); TmGPT2w(emod,epar,ereg,etime,eroot,proot,init);
 elseif ID == "RGA"
-    include(srcdir("ggosa.jl")); TmGGOSA(emod,epar,ereg,etime,proot,init);
+    include(srcdir("ggosa.jl")); TmGGOSA(emod,epar,ereg,etime,proot);
 end
 
-emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
-
-if ID == "EMN";
-      PiTm(emod,epar,ereg,etime,proot,proot,init);
-else; PiMN(emod,epar,ereg,etime,proot,proot,init);
-end
+# emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
+#
+# if ID == "EMN";
+#       PiTm(emod,epar,ereg,etime,proot,proot,init);
+# else; PiMN(emod,epar,ereg,etime,proot,proot,init);
+# end
