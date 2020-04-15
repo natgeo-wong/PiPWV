@@ -77,11 +77,7 @@ function TmDavisz(
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
-    @save "info_par.jld2" emod epar;
-    mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
-    @save "info_reg.jld2" ereg;
-    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
+    putinfo(emod,epar,ereg,etime,proot);
 
 end
 
@@ -148,11 +144,7 @@ function TmDavisp(
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
-    @save "info_par.jld2" emod epar;
-    mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
-    @save "info_reg.jld2" ereg;
-    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
+    putinfo(emod,epar,ereg,etime,proot);
 
 end
 
@@ -187,11 +179,7 @@ function TmBevis(
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
-    @save "info_par.jld2" emod epar;
-    mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
-    @save "info_reg.jld2" ereg;
-    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
+    putinfo(emod,epar,ereg,etime,proot);
 
 end
 
@@ -224,11 +212,7 @@ function TmGGOSA(
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
-    @save "info_par.jld2" emod epar;
-    mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
-    @save "info_reg.jld2" ereg;
-    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
+    putinfo(emod,epar,ereg,etime,proot);
 
 end
 
@@ -256,10 +240,6 @@ function TmGPT2w(
 
     end
 
-    efol = erafolder(emod,epar,ereg,etime,proot,"sfc");
-    @save "info_par.jld2" emod epar;
-    mv("info_par.jld2",joinpath(efol["var"],"info_par.jld2"),force=true)
-    @save "info_reg.jld2" ereg;
-    mv("info_reg.jld2",joinpath(efol["reg"],"info_reg.jld2"),force=true)
+    putinfo(emod,epar,ereg,etime,proot);
 
 end
