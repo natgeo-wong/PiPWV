@@ -8,6 +8,6 @@ include(srcdir("tm.jl"))
 include(srcdir("pi.jl"))
 include(srcdir("common.jl"))
 
-init,eroot = erastartup(aID=2,dID=1,path=datadir());
-init,proot = erastartup(aID=2,dID=1,path=datadir(),welcome=false);
+init,eroot = erastartup(aID=2,dID=1,path="/n/holyscratch01/kuang_lab/nwong/ecmwf/");
+init,proot = erastartup(aID=2,dID=1,path="/n/kuangdss01/lab/ecmwf/",welcome=false);
 addpiparams(); runPiPWV(ID="EBB",init,eroot,proot)

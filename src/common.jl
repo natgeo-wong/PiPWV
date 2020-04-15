@@ -6,7 +6,7 @@ function runPiPWV(init::Dict,eroot::Dict,proot::Dict;ID::AbstractString)
 
     if ID != "EMN"
 
-        emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)",timeID=1980);
+        emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)");
 
         if any(ID .== ["RE5","REI"]);     TmDavisz(emod,epar,ereg,etime,eroot,proot,init);
         elseif ID == "REP";               TmDavisp(emod,epar,ereg,etime,eroot,proot,init);
@@ -17,7 +17,7 @@ function runPiPWV(init::Dict,eroot::Dict,proot::Dict;ID::AbstractString)
 
     end
 
-    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)",timeID=1980);
+    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
     if ID != "EMN"
           PiTm(emod,epar,ereg,etime,proot,proot,init);
     else; PiMN(emod,epar,ereg,etime,proot,proot,init);
