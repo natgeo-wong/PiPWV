@@ -68,7 +68,6 @@ function TmDavisz(
 
         @info "$(Dates.now()) - Saving Davis Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)
-        varinfo()
 
     end
 
