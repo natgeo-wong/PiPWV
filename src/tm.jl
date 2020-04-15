@@ -1,6 +1,12 @@
 using ClimateERA
 using JLD2
 
+include(srcdir("davis.jl"));
+include(srcdir("bevis.jl"));
+#include(srcdir("gpt2w.jl"));
+include(srcdir("ggosa.jl"));
+include(srcdir("bevis.jl"));
+
 function TmDavisz(
     emod::Dict, epar::Dict, ereg::Dict, etime::Dict,
     eroot::Dict, proot::Dict, init::Dict
@@ -207,7 +213,7 @@ function TmGGOSA(
         tind  = ggostimeii(dtii);
 
         @info "$(Dates.now()) - Extracting GGOS data for $(dtii) ..."
-        gds = erancread(ggosdir,ggosname(dtii)); gTm = gds["t_mwv"][:,:,tind]*1;
+        gds = erancread(ggosname(dtii),ggosdir); gTm = gds["t_mwv"][:,:,tind]*1;
         glon = gds["longitude"][:]*1; glat = gds["latitude"][:]*1; close(gds)
 
         @info "$(Dates.now()) - Interpolating GGOS data to GeoRegion Grid for $(dtii) ..."
