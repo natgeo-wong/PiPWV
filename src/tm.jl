@@ -133,7 +133,7 @@ function TmDavisp(
 
                 Tsii = Ts[ilon,ilat]; Tdii = Td[ilon,ilat]; psii = ps[ilon,ilat,it];
                 for ip = 1 : np
-                    Taii[ip] = Ta[ilon,ilat,it,ip]; sHii[ip] = sH[ilon,ilat,it,ip];
+                    Taii[ip] = Ta[ilon,ilat,ip]; sHii[ip] = sH[ilon,ilat,ip];
                 end
 
                 Tmpre = calcTmDaviszd(p,Taii,Tsii,Tdii,sHii,zaii,zsii); Tmpre[1] = 0;
