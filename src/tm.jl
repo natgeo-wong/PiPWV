@@ -131,7 +131,7 @@ function TmDavisp(
 
             for ilat = 1 : nlat, ilon = 1 : nlon
 
-                Tsii = Ts[ilon,ilat]; Tdii = Td[ilon,ilat]; psii = ps[ilon,ilat,it];
+                Tsii = Ts[ilon,ilat]; Tdii = Td[ilon,ilat]; psii = ps[ilon,ilat];
                 for ip = 1 : np
                     Taii[ip] = Ta[ilon,ilat,ip]; sHii[ip] = sH[ilon,ilat,ip];
                 end
