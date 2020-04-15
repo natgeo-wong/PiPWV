@@ -6,7 +6,7 @@ function PiTm(
     eroot::Dict, proot::Dict, init::Dict
 )
 
-    ID = split(epar["ID"])[end];
+    ID = split(epar["ID"],"_")[end];
     tmod,tpar,_,_ = erainitialize(init,modID="csfc",parID="t_mwv_$ID");
 
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
