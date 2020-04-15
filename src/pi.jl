@@ -14,7 +14,7 @@ function PiTm(
     for dtii in datevec
 
         @info "$(Dates.now()) - Extracting Tm data ..."
-        Tm = erarawread(tmod,tpar,ereg,eroot,dtii);
+        tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii); Tm = tvar[:]*1; close(tds);
 
         @info "$(Dates.now()) - Calculating Askne and Nodius [1985] Pi data for $(dtii) ..."
         Pi = calcTm2Pi.(Tm);
@@ -45,7 +45,8 @@ function PiMN(
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
     @info "$(Dates.now()) - Extracting surface orography information ..."
-    zs = mean(erarawread(zmod,zpar,ereg,eroot,Date(2019,12)),dims=3);
+    zds,zvar = erarawread(zmod,zpar,ereg,eroot,Date(2019,12));
+    zs = mean(zvar[:]*1,dims=3); close(zds);
 
     datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 

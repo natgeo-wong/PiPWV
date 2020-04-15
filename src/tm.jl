@@ -8,8 +8,9 @@ function TmDavisz(
 
     @info "$(Dates.now()) - Tm Calculation Method: Davis et al. [1995] in Vertical Coordinates"
     ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
-    p = ClimateERA.erapressureload(); np = length(p);
-    nlon = ereg["size"][1]; nlat = ereg["size"][2];
+    p = ClimateERA.erapressureload(); nlon,nlat = ereg["size"]; np = length(p);
+
+    datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
     global_logger(ConsoleLogger(stdout,Logging.Warn))
     smod,spar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
@@ -21,46 +22,49 @@ function TmDavisz(
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
     @info "$(Dates.now()) - Extracting surface orography information ..."
-    zs = mean(erarawread(omod,opar,ereg,eroot,Date(2019,12)),dims=3);
-    datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
+    ods,ovar = erarawread(omod,opar,ereg,eroot,Date(2019,12));
+    zs = mean(ovar[:]*1,dims=3); close(ods);
+
+    Ta = zeros(nlon,nlat,np); sH = zeros(nlon,nlat,np); za = zeros(nlon,nlat,np);
     Taii = zeros(np); sHii = zeros(np); zaii = zeros(np);
 
     for dtii in datevec
 
         @info "$(Dates.now()) - Preallocating arrays ..."
-        nhr = ehr * daysinmonth(dtii);
-        Ta = zeros(nlon,nlat,nhr,np); sH = zeros(nlon,nlat,nhr,np);
-        za = zeros(nlon,nlat,nhr,np); Tm = zeros(nlon,nlat,nhr);
-        varinfo()
+        nhr = ehr * daysinmonth(dtii); Tm = zeros(nlon,nlat,nhr);
 
-        @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
-        Ts = erarawread(smod,spar,ereg,eroot,dtii);
-        Td = erarawread(dmod,dpar,ereg,eroot,dtii);
-        varinfo()
+        @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
+        for it = 1 : nhr
 
-        @info "$(Dates.now()) - Extracting Pressure-Level data for $(dtii) ..."
-        for pii = 1 : np; pre = p[pii];
-            tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii);
-            hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii);
-            zpar["level"] = pre; za[:,:,:,pii] = erarawread(zmod,zpar,ereg,eroot,dtii);
+            sds,svar = erarawread(smod,spar,ereg,eroot,dtii);
+            dds,dvar = erarawread(dmod,dpar,ereg,eroot,dtii);
+            Ts = svar[:,:,it]*1; close(sds);
+            Td = dvar[:,:,it]*1; close(dds);
+
+            for ip = 1 : np; pre = p[ip];
+                tpar["level"] = pre; tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii);
+                hpar["level"] = pre; hds,hvar = erarawread(hmod,hpar,ereg,eroot,dtii);
+                zpar["level"] = pre; zds,zvar = erarawread(zmod,zpar,ereg,eroot,dtii);
+                Ta[:,:,ip] = tvar[:,:,it]*1; close(tds);
+                sH[:,:,ip] = hvar[:,:,it]*1; close(hds);
+                za[:,:,ip] = zvar[:,:,it]*1; close(zds);
+            end
+
+            for ilat = 1 : nlat, ilon = 1 : nlon
+
+                Tsii = Ts[ilon,ilat]; Tdii = Td[ilon,ilat]; zsii = zs[ilon,ilat];
+                for ip = 1 : np
+                    Taii[ip] = Ta[ilon,ilat,ip];
+                    sHii[ip] = sH[ilon,ilat,ip];
+                    zaii[ip] = za[ilon,ilat,ip];
+                end
+
+                Tmpre = calcTmDaviszd(p,Taii,Tsii,Tdii,sHii,zaii,zsii); Tmpre[1] = 0;
+                Tm[ilon,ilat,it] = calcTmsfcz(Tmpre,Tsii,zsii,zaii);
+
+            end
+
         end
-        varinfo()
-
-        # @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
-        # for it = 1 : nhr, ilat = 1 : nlat, ilon = 1 : nlon
-        #
-        #     Tsii = Ts[ilon,ilat,it]; Tdii = Td[ilon,ilat,it]; zsii = zs[ilon,ilat];
-        #     for ip = 1 : np
-        #         Taii[ip] = Ta[ilon,ilat,it,ip];
-        #         sHii[ip] = sH[ilon,ilat,it,ip];
-        #         zaii[ip] = za[ilon,ilat,it,ip];
-        #     end
-        #
-        #     Tmpre = calcTmDaviszd(p,Taii,Tsii,Tdii,sHii,zaii,zsii); Tmpre[1] = 0;
-        #     Tm[ilon,ilat,it] = calcTmsfcz(Tmpre,Tsii,zsii,zaii);
-        #
-        # end
-        # varinfo()
 
         @info "$(Dates.now()) - Saving Davis Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)
@@ -83,8 +87,9 @@ function TmDavisp(
 
     @info "$(Dates.now()) - Tm Calculation Method: Davis et al. [1995] in Pressure Coordinates"
     ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
-    p = ClimateERA.erapressureload(); np = length(p);
-    nlon = ereg["size"][1]; nlat = ereg["size"][2];
+    p = ClimateERA.erapressureload(); np = length(p); nlon,nlat = ereg["size"];
+
+    datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
 
     global_logger(ConsoleLogger(stdout,Logging.Warn))
     smod,spar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
@@ -94,7 +99,6 @@ function TmDavisp(
     pmod,ppar,_,_ = erainitialize(init,modID="dsfc",parID="p_sfc");
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
-    datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
     Taii = zeros(np); sHii = zeros(np);
 
     for dtii in datevec
@@ -105,14 +109,15 @@ function TmDavisp(
         Tm = zeros(nlon,nlat,nhr);
 
         @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
-        Ts = erarawread(smod,spar,ereg,eroot,dtii);
-        Td = erarawread(dmod,dpar,ereg,eroot,dtii);
-        ps = erarawread(pmod,ppar,ereg,eroot,dtii);
+        sds,svar = erarawread(smod,spar,ereg,eroot,dtii); Ts = svar[:]*1; close(sds);
+        dds,dvar = erarawread(dmod,dpar,ereg,eroot,dtii); Td = dvar[:]*1; close(dds);
+        pds,pvar = erarawread(pmod,ppar,ereg,eroot,dtii); ps = pvar[:]*1; close(pds);
 
         @info "$(Dates.now()) - Extracting Pressure-Level data for $(dtii) ..."
         for pii = 1 : np; pre = p[pii];
-            tpar["level"] = pre; Ta[:,:,:,pii] = erarawread(tmod,tpar,ereg,eroot,dtii);
-            hpar["level"] = pre; sH[:,:,:,pii] = erarawread(hmod,hpar,ereg,eroot,dtii);
+            tpar["level"] = pre; tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii);
+            hpar["level"] = pre; hds,hvar = erarawread(hmod,hpar,ereg,eroot,dtii);
+            Ta[:,:,:,ip] = tvar[:]*1; close(tds); sH[:,:,:,ip] = hvar[:]*1; close(hds);
         end
 
         @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
@@ -160,11 +165,9 @@ function TmBevis(
 
     for dtii in datevec
 
-        nhr = ehr * daysinmonth(dtii);
-
         @info "$(Dates.now()) - Extracting Surface Temperature data for $(dtii) ..."
-        Ts = erarawread(tmod,tpar,ereg,eroot,dtii);
-        Tm = deepcopy(Ts); nlon,nlat,nt = size(Tm);
+        tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii); Ts = tvar[:]*1; close(tds);
+        Tm = deepcopy(Ts);
 
         @info "$(Dates.now()) - Calculating Bevis Tm data for $(dtii) ..."
         Tm = a .+ b .* Ts;
@@ -200,9 +203,8 @@ function TmGGOSA(
         tind  = ggostimeii(dtii);
 
         @info "$(Dates.now()) - Extracting GGOS data for $(dtii) ..."
-        gTm  = erancread(ggosdir,ggosname(dtii),"t_mwv")[:,:,tind];
-        glon = erancread(ggosdir,ggosname(dtii),"longitude");
-        glat = erancread(ggosdir,ggosname(dtii),"latitude");
+        gds = erancread(ggosdir,ggosname(dtii)); gTm = gds["t_mwv"][:,:,tind]*1;
+        glon = gds["longitude"][:]*1; glat = gds["latitude"][:]*1; close(gds)
 
         @info "$(Dates.now()) - Interpolating GGOS data to GeoRegion Grid for $(dtii) ..."
         Tm = calcTmGGOSA(gTm,lon,lat,glon,glat);
