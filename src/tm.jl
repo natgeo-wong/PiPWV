@@ -4,7 +4,7 @@ using JLD2
 function TmDavisz(
     emod::Dict, epar::Dict, ereg::Dict, etime::Dict,
     eroot::Dict, proot::Dict, init::Dict
-);
+)
 
     @info "$(Dates.now()) - Tm Calculation Method: Davis et al. [1995] in Vertical Coordinates"
     ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
@@ -82,7 +82,7 @@ end
 function TmDavisp(
     emod::Dict, epar::Dict, ereg::Dict, etime::Dict,
     eroot::Dict, proot::Dict, init::Dict
-);
+)
 
     @info "$(Dates.now()) - Tm Calculation Method: Davis et al. [1995] in Pressure Coordinates"
     ID = split(epar["ID"],"_")[end]; ehr = hrindy(emod);
@@ -98,37 +98,42 @@ function TmDavisp(
     pmod,ppar,_,_ = erainitialize(init,modID="dsfc",parID="p_sfc");
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
+    Ta = zeros(nlon,nlat,np); sH = zeros(nlon,nlat,np);
     Taii = zeros(np); sHii = zeros(np);
 
     for dtii in datevec
 
         @info "$(Dates.now()) - Preallocating arrays ..."
-        nhr = ehr * daysinmonth(dtii);
-        Ta = zeros(nlon,nlat,nhr,np); sH = zeros(nlon,nlat,nhr,np);
-        Tm = zeros(nlon,nlat,nhr);
-
-        @info "$(Dates.now()) - Extracting Surface-Level data for $(dtii) ..."
-        sds,svar = erarawread(smod,spar,ereg,eroot,dtii); Ts = svar[:]*1; close(sds);
-        dds,dvar = erarawread(dmod,dpar,ereg,eroot,dtii); Td = dvar[:]*1; close(dds);
-        pds,pvar = erarawread(pmod,ppar,ereg,eroot,dtii); ps = pvar[:]*1; close(pds);
-
-        @info "$(Dates.now()) - Extracting Pressure-Level data for $(dtii) ..."
-        for pii = 1 : np; pre = p[pii];
-            tpar["level"] = pre; tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii);
-            hpar["level"] = pre; hds,hvar = erarawread(hmod,hpar,ereg,eroot,dtii);
-            Ta[:,:,:,ip] = tvar[:]*1; close(tds); sH[:,:,:,ip] = hvar[:]*1; close(hds);
-        end
+        nhr = ehr * daysinmonth(dtii); Tm = zeros(nlon,nlat,nhr);
 
         @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
-        for it = 1 : nhr, ilat = 1 : nlat, ilon = 1 : nlon
+        for it = 1 : nhr
 
-            Tsii = Ts[ilon,ilat,it]; Tdii = Td[ilon,ilat,it]; psii = ps[ilon,ilat,it];
-            for ip = 1 : np
-                Taii[ip] = Ta[ilon,ilat,it,ip]; sHii[ip] = sH[ilon,ilat,it,ip];
+            sds,svar = erarawread(smod,spar,ereg,eroot,dtii);
+            dds,dvar = erarawread(dmod,dpar,ereg,eroot,dtii);
+            pds,pvar = erarawread(pmod,ppar,ereg,eroot,dtii);
+            Ts = svar[:,:,it]*1; close(sds);
+            Td = dvar[:,:,it]*1; close(dds);
+            ps = pvar[:,:,it]*1; close(pds);
+
+            for ip = 1 : np; pre = p[ip];
+                tpar["level"] = pre; tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii);
+                hpar["level"] = pre; hds,hvar = erarawread(hmod,hpar,ereg,eroot,dtii);
+                Ta[:,:,ip] = tvar[:,:,it]*1; close(tds);
+                sH[:,:,ip] = hvar[:,:,it]*1; close(hds);
             end
 
-            Tmpre = calcTmDavispd(psii,p,Taii,Tsii,Tdii,sHii); Tmpre[1] = 0;
-            Tm[ilon,ilat,it] = calcTmsfcp(Tmpre,psii,p);
+            for ilat = 1 : nlat, ilon = 1 : nlon
+
+                Tsii = Ts[ilon,ilat]; Tdii = Td[ilon,ilat]; psii = ps[ilon,ilat,it];
+                for ip = 1 : np
+                    Taii[ip] = Ta[ilon,ilat,it,ip]; sHii[ip] = sH[ilon,ilat,it,ip];
+                end
+
+                Tmpre = calcTmDaviszd(p,Taii,Tsii,Tdii,sHii,zaii,zsii); Tmpre[1] = 0;
+                Tm[ilon,ilat,it] = calcTmsfcz(Tmpre,Tsii,zsii,zaii);
+
+            end
 
         end
 
