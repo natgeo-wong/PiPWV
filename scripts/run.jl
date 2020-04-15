@@ -26,9 +26,9 @@ elseif ID == "RGA"
     include(srcdir("ggosa.jl")); TmGGOSA(emod,epar,ereg,etime,proot);
 end
 
-# emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
-#
-# if ID == "EMN";
-#       PiTm(emod,epar,ereg,etime,proot,proot,init);
-# else; PiMN(emod,epar,ereg,etime,proot,proot,init);
-# end
+emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
+
+if ID == "EMN";
+      PiTm(emod,epar,ereg,etime,proot,proot,init);
+else; PiMN(emod,epar,ereg,etime,proot,proot,init);
+end
