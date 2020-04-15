@@ -20,7 +20,7 @@ function runPiPWV(init::Dict,eroot::Dict,proot::Dict;ID::AbstractString)
     emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
     if ID != "EMN"
           PiTm(emod,epar,ereg,etime,proot,proot,init);
-    else; PiMN(emod,epar,ereg,etime,proot,proot,init);
+    else; PiMN(emod,epar,ereg,etime,eroot,proot,init);
     end
 
 end

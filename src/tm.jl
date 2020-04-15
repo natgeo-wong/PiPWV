@@ -136,8 +136,8 @@ function TmDavisp(
                     Taii[ip] = Ta[ilon,ilat,ip]; sHii[ip] = sH[ilon,ilat,ip];
                 end
 
-                Tmpre = calcTmDaviszd(p,Taii,Tsii,Tdii,sHii,zaii,zsii); Tmpre[1] = 0;
-                Tm[ilon,ilat,it] = calcTmsfcz(Tmpre,Tsii,zsii,zaii);
+                Tmpre = calcTmDavispd(psii,p,Taii,Tsii,Tdii,sHii); Tmpre[1] = 0;
+                Tm[ilon,ilat,it] = calcTmsfcp(Tmpre,psii,p);
 
             end
 
