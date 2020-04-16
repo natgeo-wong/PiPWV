@@ -11,6 +11,7 @@ _research
 /Manifest.toml
 logs/
 references/*.pdf
+run/
 
 ################################################################################
 #                        Cluster Job Submission Scripts                        #
