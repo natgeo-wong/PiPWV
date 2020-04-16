@@ -46,7 +46,7 @@ function calcTmsfcz(
 )
 
     if zs >= za[37]; zi = za[37] - 287.05 * Ts * log(1.01235); else; zi = zs;  end;
-    za = reverse(vcat(za,zi)); spl = Spline1D(za,reverse(Tm)); return spl(zs)
+    za = reverse(vcat(za,zi)); spl = Spline1D(za,reverse(Tm),k=1); return spl(zs)
 
 end
 
@@ -55,6 +55,6 @@ function calcTmsfcp(
 )
 
     if ps >= p[end]; p = vcat(p,ps); else; p = vcat(p,1012.35); end
-    spl = Spline1D(p,Tm); return spl(ps)
+    spl = Spline1D(p,Tm,k=1); return spl(ps)
 
 end

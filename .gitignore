@@ -9,7 +9,8 @@ plots
 notebooks
 _research
 /Manifest.toml
-logs
+logs/
+references/*.pdf
 
 ################################################################################
 #                        Cluster Job Submission Scripts                        #
