@@ -116,7 +116,7 @@ function TmDavisp(
             pds,pvar = erarawread(pmod,ppar,ereg,eroot,dtii);
             Ts = svar[:,:,it]*1; close(sds);
             Td = dvar[:,:,it]*1; close(dds);
-            ps = pvar[:,:,it]*1; close(pds);
+            ps = pvar[:,:,it]/100; close(pds);
 
             for ip = 1 : np; pre = p[ip];
                 tpar["level"] = pre; tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii);
