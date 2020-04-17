@@ -10,7 +10,7 @@ notebooks
 _research
 /Manifest.toml
 logs/
-references/*.pdf
+references/**/*.pdf
 run/
 
 ################################################################################

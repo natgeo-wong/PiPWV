@@ -1,4 +1,5 @@
 name = "PiPWV"
+authors = ["Nathanael Wong <natgeo.wong@outlook.com>"]
 
 [deps]
 ClimateERA = "96028d6e-f290-464b-8a03-1e746e0363c3"
