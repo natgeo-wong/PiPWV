@@ -32,14 +32,14 @@ function anaPiPWV(init::Dict,eroot::Dict;ID::AbstractString)
 
         emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)");
         for yr = etime["Begin"] : etime["End"]
-            if (ID != "RGA") && (yr != 1997); eraanalysis(emod,epar,ereg,yr,eroot); end
+            if !((ID == "RGA") && (yr == 1997)); eraanalysis(emod,epar,ereg,yr,eroot); end
         end
 
     end
 
     emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
     for yr = etime["Begin"] : etime["End"]
-        if (ID != "RGA") && (yr != 1997); eraanalysis(emod,epar,ereg,yr,eroot); end
+        if !((ID == "RGA") && (yr == 1997)); eraanalysis(emod,epar,ereg,yr,eroot); end
     end
 
 end
