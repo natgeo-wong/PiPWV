@@ -1,4 +1,5 @@
 using ClimateERA
+using JLD2
 
 addpiparams() = eraparametersadd(srcdir("piparams.txt"));
 
@@ -21,6 +22,24 @@ function runPiPWV(init::Dict,eroot::Dict,proot::Dict;ID::AbstractString)
     if ID != "EMN"
           PiTm(emod,epar,ereg,etime,proot,proot,init);
     else; PiMN(emod,epar,ereg,etime,eroot,proot,init);
+    end
+
+end
+
+function anaPiPWV(init::Dict,eroot::Dict,proot::Dict;ID::AbstractString)
+
+    if ID != "EMN"
+
+        emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)");
+        for yr = etime["Begin"] : etime["end"]
+            eraanalysis(emod,epar,ereg,yr,eroot);
+        end
+
+    end
+
+    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
+    for yr = etime["Begin"] : etime["end"]
+        eraanalysis(emod,epar,ereg,yr,eroot);
     end
 
 end

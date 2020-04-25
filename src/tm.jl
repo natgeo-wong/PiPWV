@@ -1,9 +1,7 @@
 using ClimateERA
-using JLD2
 
 include(srcdir("davis.jl"));
 include(srcdir("bevis.jl"));
-#include(srcdir("gpt2w.jl"));
 include(srcdir("ggosa.jl"));
 include(srcdir("bevis.jl"));
 
@@ -209,34 +207,6 @@ function TmGGOSA(
 
         @info "$(Dates.now()) - Saving GGOS Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)
-
-    end
-
-    putinfo(emod,epar,ereg,etime,proot);
-
-end
-
-function TmGPT2w(
-    emod::Dict, epar::Dict, ereg::Dict, etime::Dict, proot::Dict
-)
-
-    @info "$(Dates.now()) - Tm Calculation Method: Derived from GPT2w [Bohm et al., 2015]"
-    ID = split(epar["ID"],"_")[end];
-    lon = ereg["lon"]; lat = ereg["lat"]; ehr = hrstep(emod);
-    datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
-
-    global_logger(ConsoleLogger(stdout,Logging.Warn))
-    zmod,zpar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
-    global_logger(ConsoleLogger(stdout,Logging.Info))
-
-    @info "$(Dates.now()) - Extracting surface orography information ..."
-    zs = mean(erarawread(zmod,zpar,ereg,eroot,Date(2019,12)),dims=3);
-    nlon,nlat = size(zs);
-
-    for dtii in datevec
-
-        Tm = calcTmGPT2w(lon,lat,zs,dtii,ehr);
-        erarawsave(Tm,emod,epar,ereg,dtii,proot);
 
     end
 
