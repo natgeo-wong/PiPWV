@@ -12,9 +12,9 @@ JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 MATLAB = "10e44e05-a98a-55b3-a45b-ba969058deb6"
 NCDatasets = "85f8d34a-cbdd-5861-8df4-14fed0d494ab"
 NumericalIntegration = "e7bfaba1-d571-5449-8927-abc22e82249b"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 
 [compat]
-ClimateERA = "0.6"
 DrWatson = "1"
 NCDatasets = "0.9, 0.10"
 julia = "1"
