@@ -14,14 +14,14 @@ This repository contains the basic setup for the **PiPWV** project, used to calc
 * [ ] Downloaded ERA-Interim Raw Data
 
 **Calculation of Tm and `Π`**
-* [ ] **RE5:** Reanalysis - ERA5 - Vertical
+* [x] **RE5:** Reanalysis - ERA5 - Vertical
 * [ ] **REI:** Reanalysis - ERA-Interim - Vertical
-* [ ] **REP:** Reanalysis - ERA5 - Pressure
+* [x] **REP:** Reanalysis - ERA5 - Pressure
 * [x] **RGA:** Reanalysis - GGOS Atmosphere [Bohm et al., 2013] (calculated from ERA-Interim)
 * [x] **EBB:** Empirical - Bevis et al. [1992] approximation - Bevis et al. [1992] Coefficients
 * [x] **EBM:** Empirical - Bevis et al. [1992] approximation - Manandhar et al. [2017] Coefficients
 * [x] **EMN:** Empirical - Manandhar et al. [2017]
-* [ ] **EG2:** Empirical - GPT2w Model [Bohm et al., 2015] derived from GGOS Atmosphere
+* [x] **EG2:** Empirical - GPT2w Model [Bohm et al., 2015] derived from GGOS Atmosphere
 
 **Analysis/Comparison between Datasets**
 
