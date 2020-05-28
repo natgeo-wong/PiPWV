@@ -9,8 +9,8 @@ function runPiPWV(init::Dict,eroot::Dict,proot::Dict;ID::AbstractString)
 
         emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)");
 
-        if any(ID .== ["RE5","REI"]);     TmDavisz(emod,epar,ereg,etime,eroot,proot,init);
-        elseif ID == "REP";               TmDavisp(emod,epar,ereg,etime,eroot,proot,init);
+        if     ID == "RE5";               TmDavisz(emod,epar,ereg,etime,eroot,proot,init);
+        elseif any(ID .== ["REP","REI"]); TmDavisp(emod,epar,ereg,etime,eroot,proot,init);
         elseif any(ID .== ["EBB","EBM"]); TmBevis(emod,epar,ereg,etime,eroot,proot,init);
         elseif ID == "EG2";               TmGPT2w(emod,epar,ereg,etime,eroot,proot,init);
         elseif ID == "RGA";               TmGGOSA(emod,epar,ereg,etime,proot);
