@@ -41,7 +41,7 @@ function compilePiPWV(
             close(eds)
 
         else
-            eavg[:,:,it] = NaN; esea[:,:,it] = NaN; edhr[:,:,it] = NaN;
+            eavg[:,:,it] .= NaN; esea[:,:,it] .= NaN; edhr[:,:,it] .= NaN;
         end
     end
 
