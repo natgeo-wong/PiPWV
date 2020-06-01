@@ -26,12 +26,16 @@ function compilePiTm(
             eavg[:,:,it] = evar[:]
             close(eds)
 
-            eds,evar = eraanaread(
-                "domain_yearly_std_climatology",
+            ds1,emax = eraanaread(
+                "domain_yearly_maximum_climatology",
                 emod,epar,ereg,eroot,Date(yr)
             )
-            esea[:,:,it] = evar[:]
-            close(eds)
+            ds2,emin = eraanaread(
+                "domain_yearly_minimum_climatology",
+                emod,epar,ereg,eroot,Date(yr)
+            )
+            esea[:,:,it] = emax[:] .- emin[:]
+            close(ds1); close(ds2)
 
             eds,evar = eraanaread(
                 "domain_yearly_mean_diurnalvariance",
