@@ -1,7 +1,19 @@
 using ClimateERA
 using JLD2
 
-addpiparams() = eraparametersadd(srcdir("piparams.txt"));
+include(srcdir("compile.jl"))
+
+addpiparams() = eraparameteradd(srcdir("piparams.txt"));
+
+function nanmean(data)
+    dataii = @view data[.!isnan.(data)]
+    if dataii != []; return mean(dataii); else; return NaN; end
+end
+
+function nanstd(data)
+    dataii = @view data[.!isnan.(data)]
+    if dataii != []; return std(dataii); else; return NaN; end
+end
 
 function runPiPWV(init::Dict,eroot::Dict,proot::Dict;ID::AbstractString)
 
@@ -41,6 +53,16 @@ function anaPiPWV(init::Dict,eroot::Dict;ID::AbstractString)
     for yr = etime["Begin"] : etime["End"]
         if !((ID == "RGA") && (yr == 1997)); eraanalysis(emod,epar,ereg,yr,eroot); end
     end
+
+end
+
+function compilePiPWV(init::Dict,eroot::Dict;ID::AbstractString)
+
+    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
+    lon = ereg["lon"]; lat = ereg["lat"]
+    PiTm_avg,PiTm_dhr,PiTm_sea,PiTm_ian = compilePiPWV(ID=ID,emod,epar,ereg,etime,eroot)
+    if !isdir(datadir("compiled")); mkpath(datadir("compiled")) end
+    @save datadir("compiled/PiTm_$(ID).jld2") lon lat PiTm_avg PiTm_dhr PiTm_sea PiTm_ian
 
 end
 
