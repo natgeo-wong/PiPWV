@@ -1,7 +1,7 @@
 using ClimateERA
 using Statistics
 
-function compilePiPWV(
+function compilePiTm(
     emod::AbstractDict, epar::AbstractDict, ereg::AbstractDict, etime::AbstractDict,
     eroot::AbstractDict;
     ID::AbstractString
@@ -16,7 +16,7 @@ function compilePiPWV(
 
     @info "$(Dates.now()) - Extracting preliminarily-analyzed reanalysis data ..."
     for yr = etime["Begin"] : etime["End"]
-        it = it + 1; @info "$(Dates.now()) - Extracting data for $yr ..."
+        it = it + 1;
         if !((ID == "RGA") && (yr == 1997));
 
             eds,evar = eraanaread(

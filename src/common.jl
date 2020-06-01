@@ -58,11 +58,17 @@ end
 
 function compilePiPWV(init::Dict,eroot::Dict;ID::AbstractString)
 
+    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)");
+    lon = ereg["lon"]; lat = ereg["lat"]
+    Tm_avg,Tm_dhr,Tm_sea,Tm_ian = compilePiTm(ID=ID,emod,epar,ereg,etime,eroot)
+    if !isdir(datadir("compiled")); mkpath(datadir("compiled")) end
+    @save datadir("compiled/Tm_$(ID).jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian
+
     emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
     lon = ereg["lon"]; lat = ereg["lat"]
-    PiTm_avg,PiTm_dhr,PiTm_sea,PiTm_ian = compilePiPWV(ID=ID,emod,epar,ereg,etime,eroot)
+    Pi_avg,Pi_dhr,Pi_sea,Pi_ian = compilePiTm(ID=ID,emod,epar,ereg,etime,eroot)
     if !isdir(datadir("compiled")); mkpath(datadir("compiled")) end
-    @save datadir("compiled/PiTm_$(ID).jld2") lon lat PiTm_avg PiTm_dhr PiTm_sea PiTm_ian
+    @save datadir("compiled/Pi_$(ID).jld2") lon lat Pi_avg Pi_dhr Pi_sea Pi_ian
 
 end
 
