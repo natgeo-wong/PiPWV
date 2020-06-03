@@ -76,8 +76,7 @@ function calcPiMN(
     if abs(lat) > 0; hfac = 1.48; else; hfac = 1.25; end
     dy = dayofyear(date) - 1 + hour(date)/24;
 
-    Pi = (-sign(lat) * 1.7e-5 * abs(lat)^hfac - 0.0001) * cos((dy-28) * 2 * pi / 365.25)
-         + 0.165 - 1.7*10^(-5) * abs(lat)^1.65- 2.38 * 10^-6 * zs
+    Pi = (-sign(lat) * 1.7e-5 * abs(lat)^hfac - 0.0001) * cos((dy-28) * 2 * pi / 365.25) + 0.165 - 1.7e-5 * abs(lat)^1.65- 2.38 * 10^-6 * zs / 9.81
 
     return Pi
 
