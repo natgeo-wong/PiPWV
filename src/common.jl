@@ -61,16 +61,16 @@ function compilePiPWV(init::Dict,eroot::Dict;ID::AbstractString)
     if ID != "EMN"
         emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)");
         lon = ereg["lon"]; lat = ereg["lat"]
-        Tm_avg,Tm_dhr,Tm_sea,Tm_ian = compilePiTm(ID=ID,emod,epar,ereg,etime,eroot)
+        Tm_avg,Tm_var,Tm_dhr,Tm_itr,Tm_sea,Tm_ian = compilePiTm(ID=ID,emod,epar,ereg,etime,eroot)
         if !isdir(datadir("compiled")); mkpath(datadir("compiled")) end
-        @save datadir("compiled/Tm_$(ID).jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian
+        @save datadir("compiled/Tm_$(ID).jld2") lon lat Tm_avg Tm_var Tm_dhr Tm_itr Tm_sea Tm_ian
     end
 
     emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)");
     lon = ereg["lon"]; lat = ereg["lat"]
-    Pi_avg,Pi_dhr,Pi_sea,Pi_ian = compilePiTm(ID=ID,emod,epar,ereg,etime,eroot)
+    Pi_avg,Pi_var,Pi_dhr,Pi_itr,Pi_sea,Pi_ian = compilePiTm(ID=ID,emod,epar,ereg,etime,eroot)
     if !isdir(datadir("compiled")); mkpath(datadir("compiled")) end
-    @save datadir("compiled/Pi_$(ID).jld2") lon lat Pi_avg Pi_dhr Pi_sea Pi_ian
+    @save datadir("compiled/Pi_$(ID).jld2") lon lat Pi_avg Pi_var Pi_dhr Pi_itr Pi_sea Pi_ian
 
 end
 
