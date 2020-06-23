@@ -51,7 +51,7 @@ function PiMN(
         date = DateTime(dtii);
         dvec = collect(date:Hour(24/ehr):(date+Month(1))); pop!(dvec)
         ndt = length(dvec);
-        Pi  = zeros(nlon,nlat,ndt)
+        Pi  = Array{Float32,3}(undef,nlon,nlat,ndt)
 
         @info "$(Dates.now()) - Calculating Manandhar [2017] Pi data for $(dtii) ..."
         for it = 1 : ndt, ilat = 1 : nlat, ilon = 1 : nlon

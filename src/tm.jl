@@ -29,13 +29,14 @@ function TmDavisz(
     ods,ovar = erarawread(omod,opar,ereg,eroot,Date(2019,12));
     zs = mean(ovar[:]*1,dims=3); close(ods);
 
-    Ta = zeros(nlon,nlat,np); sH = zeros(nlon,nlat,np); za = zeros(nlon,nlat,np);
-    Taii = zeros(np); sHii = zeros(np); zaii = zeros(np);
+    Ta = Array{Float32,3}(undef,nlon,nlat,np); Taii = Vector{Float32}(undef,np);
+    sH = Array{Float32,3}(undef,nlon,nlat,np); sHii = Vector{Float32}(undef,np);
+    za = Array{Float32,3}(undef,nlon,nlat,np); zaii = Vector{Float32}(undef,np);
 
     for dtii in datevec
 
         @info "$(Dates.now()) - Preallocating arrays ..."
-        nhr = ehr * daysinmonth(dtii); Tm = zeros(nlon,nlat,nhr);
+        nhr = ehr * daysinmonth(dtii); Tm = Array{Float32,3}(undef,nlon,nlat,nhr);
 
         @info "$(Dates.now()) - Calculating Davis Tm data for $(dtii) ..."
         for it = 1 : nhr
@@ -98,8 +99,8 @@ function TmDavisp(
     pmod,ppar,_,_ = erainitialize(init,modID="dsfc",parID="p_sfc");
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
-    Ta = zeros(nlon,nlat,np); sH = zeros(nlon,nlat,np);
-    Taii = zeros(np); sHii = zeros(np);
+    Ta = Array{Float32,3}(undef,nlon,nlat,np); Taii = Vector{Float32}(undef,np);
+    sH = Array{Float32,3}(undef,nlon,nlat,np); sHii = Vector{Float32}(undef,np);
 
     for dtii in datevec
 
