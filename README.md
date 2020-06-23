@@ -11,11 +11,11 @@ This repository contains the basic setup for the **PiPWV** project, used to calc
 
 **Data Downloads**
 * [x] Downloaded ERA5 Raw Data
-* [ ] Downloaded ERA-Interim Raw Data
+* [x] Downloaded ERA-Interim Raw Data
 
 **Calculation of Tm and `Π`**
 * [x] **RE5:** Reanalysis - ERA5 - Vertical
-* [ ] **REI:** Reanalysis - ERA-Interim - Vertical
+* [x] **REI:** Reanalysis - ERA-Interim - Vertical
 * [x] **REP:** Reanalysis - ERA5 - Pressure
 * [x] **RGA:** Reanalysis - GGOS Atmosphere [Bohm et al., 2013] (calculated from ERA-Interim)
 * [x] **EBB:** Empirical - Bevis et al. [1992] approximation - Bevis et al. [1992] Coefficients
@@ -25,12 +25,12 @@ This repository contains the basic setup for the **PiPWV** project, used to calc
 
 **Analysis/Comparison between Datasets**
 
-* [ ] Analysis of diurnal and seasonal variability for **RE5**
-* [ ] Comparison of **RE5** to **REI** and see if **RE5** is vastly different from **REI** and how
-* [ ] Comparison to **RE5** to **REP** and see if **REP** is close to **RE5** so that in the future can use **REP** and save computational power and data downloading time
-* [ ] Comparison of **REI** to **RGA** (since RGA is taken from ERA-Interim, so comparing a direct ERA-Interim calculation makes more sense)
-* [ ] Compare **RE5** to **EBB** and **EBM** to see if Bevis et al. [1992] methodology is a globally valid approximation
-* [ ] See if empirical models **EG2** and **EMN** are close approximations or if it would be better to just use a single gridded `Π` dataset
+* [x] Analysis of diurnal and seasonal variability for **RE5**
+* [x] Comparison of **RE5** to **REI** and see if **RE5** is vastly different from **REI** and how
+* [x] Comparison to **RE5** to **REP** and see if **REP** is close to **RE5** so that in the future can use **REP** and save computational power and data downloading time
+* [x] Comparison of **REI** to **RGA** (since RGA is taken from ERA-Interim, so comparing a direct ERA-Interim calculation makes more sense)
+* [x] Compare **RE5** to **EBB** and **EBM** to see if Bevis et al. [1992] methodology is a globally valid approximation
+* [x] See if empirical models **EG2** and **EMN** are close approximations or if it would be better to just use a single gridded `Π` dataset
 
 **`Π` Dataset creation**
 * [ ] Write functions (modify from `ClimateERA`) to download daily meteorological data
