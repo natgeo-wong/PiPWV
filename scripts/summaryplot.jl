@@ -35,15 +35,15 @@ function plotaxs(ID::AbstractString)
     c = axs[1].contourf(lon,lat,Pi_avg',cmap="viridis",levels=(52:68)/400,extend="both")
     axs[1].format(
         title=L"$\mu_\Pi$",coast=true,
-        suptitle="ID = $ID"
+        suptitle="$ID"
     )
-    axs[1].colorbar(c,loc="r",extend="both")
+    axs[1].colorbar(c,loc="r",extend="both",locator=0.01)
 
-    c = axs[2].contourf(lon,lat,Pi_ian'*100,cmap="viridis",levels=(0:10)/10,extend="max")
+    c = axs[2].contourf(lon,lat,Pi_ian'*100,cmap="viridis",levels=(0:10)/4,extend="max")
     axs[2].format(
         title=L"$\Delta_a\Pi$ / $\%$",coast=true
     )
-    axs[2].colorbar(c,loc="r",extend="max")
+    axs[2].colorbar(c,loc="r",extend="max",locator=0.5)
 
     c = axs[3].contourf(lon,lat,Pi_dhr'*100,cmap="viridis",levels=(0:10)/5,extend="max")
     axs[3].format(
@@ -55,13 +55,13 @@ function plotaxs(ID::AbstractString)
     axs[4].format(
         title=L"$\Delta_s\Pi$ / $\%$",coast=true
     )
-    axs[4].colorbar(c,loc="r",extend="max")
+    axs[4].colorbar(c,loc="r",extend="max",locator=3)
 
-    c = axs[5].contourf(lon,lat,Pi_itr'*100,cmap="viridis",levels=0:8,extend="max")
+    c = axs[5].contourf(lon,lat,Pi_itr'*100,cmap="viridis",levels=(0:16)/2,extend="max")
     axs[5].format(
         title=L"$\Delta_i\Pi$ / $\%$",coast=true
     )
-    axs[5].colorbar(c,loc="r",extend="max")
+    axs[5].colorbar(c,loc="r",extend="max",locator=1)
 
     for ii = 1 : 5
         axs[ii].format(abc=true)
@@ -89,21 +89,21 @@ function plotaxs2(ID::AbstractString)
     c = axs[1].contourf(lon,lat,Pi_avg',cmap="viridis",levels=(52:68)/400,extend="both")
     axs[1].format(
         title=L"$\mu_\Pi$",coast=true,
-        suptitle="ID = $ID"
+        suptitle="$ID"
     )
-    axs[1].colorbar(c,loc="r",extend="both")
+    axs[1].colorbar(c,loc="r",extend="both",locator=0.01)
 
     c = axs[2].contourf(lon,lat,Pi_sea'*100,cmap="viridis",levels=0:15,extend="max")
     axs[2].format(
         title=L"$\Delta_s\Pi$ / $\%$",coast=true
     )
-    axs[2].colorbar(c,loc="r",extend="max")
+    axs[2].colorbar(c,loc="r",extend="max",locator=3)
 
-    c = axs[3].contourf(lon,lat,Pi_itr'*100,cmap="viridis",levels=0:8,extend="max")
+    c = axs[3].contourf(lon,lat,Pi_itr'*100,cmap="viridis",levels=(0:16)/2,extend="max")
     axs[3].format(
         title=L"$\Delta_i\Pi$ / $\%$",coast=true
     )
-    axs[3].colorbar(c,loc="r",extend="max")
+    axs[3].colorbar(c,loc="r",extend="max",locator=1)
 
     for ii = 1 : 3
         axs[ii].format(abc=true)

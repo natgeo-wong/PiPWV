@@ -46,13 +46,13 @@ function plotaxs(ID::AbstractString,cID::AbstractString="RE5")
 
     c = axs[2].contourf(
         lon,lat,(Pi_ian.-cID_ian)'*100,
-        cmap="RdBu_r",levels=(-5:5)/10,
+        cmap="RdBu_r",levels=(-4:4)/2,
         extend="both"
     )
     axs[2].format(
         title=string(L"$\Delta_a\Pi$"," ($ID-$cID) / %"),coast=true
     )
-    axs[2].colorbar(c,loc="r",extend="both")
+    axs[2].colorbar(c,loc="r",extend="both",locator=1)
 
     c = axs[3].contourf(
         lon,lat,(Pi_dhr.-cID_dhr)'*100,
@@ -72,7 +72,7 @@ function plotaxs(ID::AbstractString,cID::AbstractString="RE5")
     axs[4].format(
         title=string(L"$\Delta_s\Pi$"," ($ID-$cID) / %"),coast=true
     )
-    axs[4].colorbar(c,loc="r",extend="both")
+    axs[4].colorbar(c,loc="r",extend="both",locator=2)
 
     c = axs[5].contourf(
         lon,lat,(Pi_itr.-cID_itr)'*100,
@@ -82,7 +82,7 @@ function plotaxs(ID::AbstractString,cID::AbstractString="RE5")
     axs[5].format(
         title=string(L"$\Delta_i\Pi$"," ($ID-$cID) / %"),coast=true
     )
-    axs[5].colorbar(c,loc="r",extend="both")
+    axs[5].colorbar(c,loc="r",extend="both",locator=2)
 
     for ii = 1 : 5
         axs[ii].format(abc=true)
@@ -125,7 +125,7 @@ function plotaxs2(ID::AbstractString,cID::AbstractString="RE5")
     axs[2].format(
         title=string(L"$\Delta_s\Pi$"," ($ID-$cID)/ %"),coast=true
     )
-    axs[2].colorbar(c,loc="r",extend="both")
+    axs[2].colorbar(c,loc="r",extend="both",locator=2)
 
     c = axs[3].contourf(
         lon,lat,(Pi_itr.-cID_itr)'*100,
@@ -134,7 +134,7 @@ function plotaxs2(ID::AbstractString,cID::AbstractString="RE5")
     axs[3].format(
         title=string(L"$\Delta_i\Pi$"," ($ID-$cID) / %"),coast=true
     )
-    axs[3].colorbar(c,loc="r",extend="both")
+    axs[3].colorbar(c,loc="r",extend="both",locator=2)
 
     for ii = 1 : 3
         axs[ii].format(abc=true)
@@ -144,11 +144,11 @@ function plotaxs2(ID::AbstractString,cID::AbstractString="RE5")
 
 end
 
-# plotaxs("REP");
-# plotaxs("REI");
-# plotaxs("RGA");; plotaxs("RGA","REI");
-# plotaxs("EBB");
+plotaxs("REP");
+plotaxs("REI");
+plotaxs("RGA");; plotaxs("RGA","REI");
+plotaxs("EBB");
 plotaxs("EBM");
-#
-# plotaxs2("EG2"); plotaxs2("EG2","REI");
-# plotaxs2("EMN");
+
+plotaxs2("EG2"); plotaxs2("EG2","REI");
+plotaxs2("EMN");
