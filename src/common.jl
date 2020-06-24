@@ -5,14 +5,19 @@ include(srcdir("compile.jl"))
 
 addpiparams() = eraparameteradd(srcdir("piparams.txt"));
 
-function nanmean(data)
+function nanmean(data::AbstractArray)
     dataii = @view data[.!isnan.(data)]
     if dataii != []; return mean(dataii); else; return NaN; end
 end
 
-function nanstd(data)
+function nanstd(data::AbstractArray)
     dataii = @view data[.!isnan.(data)]
     if dataii != []; return std(dataii); else; return NaN; end
+end
+
+function nanrange(data::AbstractArray)
+    dataii = @view data[.!isnan.(data)]
+    if dataii != []; return maximum(dataii) - minimum(dataii); else; return NaN; end
 end
 
 function runPiPWV(init::Dict,eroot::Dict,proot::Dict;ID::AbstractString)

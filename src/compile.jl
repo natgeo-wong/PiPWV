@@ -73,7 +73,7 @@ function compilePiTm(
     @info "$(Dates.now()) - Calculating yearly mean, and diurnal, seasonal and interannual variability ..."
     for ilat = 1 : nlat, ilon = 1 : nlon
         PiTm_avg[ilon,ilat] = nanmean(@view eavg[ilon,ilat,:])
-        PiTm_ian[ilon,ilat] = nanstd(@view eavg[ilon,ilat,:])
+        PiTm_ian[ilon,ilat] = nanrange(@view eavg[ilon,ilat,:])
         PiTm_var[ilon,ilat] = nanmean(@view erng[ilon,ilat,:])
         PiTm_itr[ilon,ilat] = nanmean(@view eitr[ilon,ilat,:])
         PiTm_sea[ilon,ilat] = nanmean(@view esea[ilon,ilat,:])
