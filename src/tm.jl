@@ -29,6 +29,8 @@ function TmDavisz(
     ods,ovar = erarawread(omod,opar,ereg,eroot,Date(2019,12));
     zs = mean(ovar[:]*1,dims=3); close(ods);
 
+    Ts = Array{Float32,3}(undef,nlon,nlat);
+    Td = Array{Float32,3}(undef,nlon,nlat);
     Ta = Array{Float32,3}(undef,nlon,nlat,np); Taii = Vector{Float32}(undef,np);
     sH = Array{Float32,3}(undef,nlon,nlat,np); sHii = Vector{Float32}(undef,np);
     za = Array{Float32,3}(undef,nlon,nlat,np); zaii = Vector{Float32}(undef,np);
@@ -43,25 +45,25 @@ function TmDavisz(
 
             sds,svar = erarawread(smod,spar,ereg,eroot,dtii);
             dds,dvar = erarawread(dmod,dpar,ereg,eroot,dtii);
-            Ts = svar[:,:,it]*1; close(sds);
-            Td = dvar[:,:,it]*1; close(dds);
+            Ts .= svar[:,:,it]*1; close(sds);
+            Td .= dvar[:,:,it]*1; close(dds);
 
             for ip = 1 : np; pre = p[ip];
                 tpar["level"] = pre; tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii);
                 hpar["level"] = pre; hds,hvar = erarawread(hmod,hpar,ereg,eroot,dtii);
                 zpar["level"] = pre; zds,zvar = erarawread(zmod,zpar,ereg,eroot,dtii);
-                Ta[:,:,ip] = tvar[:,:,it]*1; close(tds);
-                sH[:,:,ip] = hvar[:,:,it]*1; close(hds);
-                za[:,:,ip] = zvar[:,:,it]*1; close(zds);
+                Ta[:,:,ip] .= tvar[:,:,it]*1; close(tds);
+                sH[:,:,ip] .= hvar[:,:,it]*1; close(hds);
+                za[:,:,ip] .= zvar[:,:,it]*1; close(zds);
             end
 
             for ilat = 1 : nlat, ilon = 1 : nlon
 
                 Tsii = Ts[ilon,ilat]; Tdii = Td[ilon,ilat]; zsii = zs[ilon,ilat];
                 for ip = 1 : np
-                    Taii[ip] = Ta[ilon,ilat,ip];
-                    sHii[ip] = sH[ilon,ilat,ip];
-                    zaii[ip] = za[ilon,ilat,ip];
+                    Taii[ip] .= Ta[ilon,ilat,ip];
+                    sHii[ip] .= sH[ilon,ilat,ip];
+                    zaii[ip] .= za[ilon,ilat,ip];
                 end
 
                 Tmpre = calcTmDaviszd(p,Taii,Tsii,Tdii,sHii,zaii,zsii); Tmpre[1] = Taii[1];
@@ -99,6 +101,9 @@ function TmDavisp(
     pmod,ppar,_,_ = erainitialize(init,modID="dsfc",parID="p_sfc");
     global_logger(ConsoleLogger(stdout,Logging.Info))
 
+    Ts = Array{Float32,3}(undef,nlon,nlat);
+    Td = Array{Float32,3}(undef,nlon,nlat);
+    ps = Array{Float32,3}(undef,nlon,nlat);
     Ta = Array{Float32,3}(undef,nlon,nlat,np); Taii = Vector{Float32}(undef,np);
     sH = Array{Float32,3}(undef,nlon,nlat,np); sHii = Vector{Float32}(undef,np);
 
@@ -113,15 +118,15 @@ function TmDavisp(
             sds,svar = erarawread(smod,spar,ereg,eroot,dtii);
             dds,dvar = erarawread(dmod,dpar,ereg,eroot,dtii);
             pds,pvar = erarawread(pmod,ppar,ereg,eroot,dtii);
-            Ts = svar[:,:,it]*1; close(sds);
-            Td = dvar[:,:,it]*1; close(dds);
-            ps = pvar[:,:,it]/100; close(pds);
+            Ts .= svar[:,:,it]*1; close(sds);
+            Td .= dvar[:,:,it]*1; close(dds);
+            ps .= pvar[:,:,it]/100; close(pds);
 
             for ip = 1 : np; pre = p[ip];
                 tpar["level"] = pre; tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii);
                 hpar["level"] = pre; hds,hvar = erarawread(hmod,hpar,ereg,eroot,dtii);
-                Ta[:,:,ip] = tvar[:,:,it]*1; close(tds);
-                sH[:,:,ip] = hvar[:,:,it]*1; close(hds);
+                Ta[:,:,ip] .= tvar[:,:,it]*1; close(tds);
+                sH[:,:,ip] .= hvar[:,:,it]*1; close(hds);
             end
 
             for ilat = 1 : nlat, ilon = 1 : nlon
