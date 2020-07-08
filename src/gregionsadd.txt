@@ -1,2 +1,4 @@
 # (1)ID,(2)pID,(3)N,(4)W,(5)S,(6)E,(7)Description,(8)Notes
 NPL,GLB,31,79,26,89,Nepal,Defined for PiPWV Project
+SMT,SEA,6,95,-6,107,Sumatra,Defined for PiPWV Project
+SGP,SEA,3,101,0,106,Singapore / Johor,Defined for I3CM Project
