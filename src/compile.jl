@@ -1,4 +1,5 @@
 using ClimateERA
+using Logging
 using Statistics
 
 function compilePiTm(

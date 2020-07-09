@@ -2,8 +2,6 @@ using DrWatson
 @quickactivate "PiPWV"
 using ClimateERA
 
-global_logger(ConsoleLogger(stdout,Logging.Info))
-
 init,eroot = erastartup(aID=1,dID=1,path="/n/holyscratch01/kuang_lab/nwong/ecmwf/");
 
 eradownload(init,eroot,modID="dsfc",parID="t_sfc");

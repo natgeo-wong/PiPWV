@@ -1,4 +1,5 @@
 using ClimateERA
+using Logging
 
 function PiTm(
     emod::Dict, epar::Dict, ereg::Dict, etime::Dict,

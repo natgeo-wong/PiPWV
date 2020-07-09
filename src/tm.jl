@@ -1,4 +1,5 @@
 using ClimateERA
+using Logging
 
 include(srcdir("davis.jl"));
 include(srcdir("bevis.jl"));

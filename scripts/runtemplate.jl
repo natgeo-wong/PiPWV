@@ -2,8 +2,6 @@ using DrWatson
 @quickactivate "PiPWV"
 using ClimateERA
 
-global_logger(ConsoleLogger(stdout,Logging.Info))
-
 include(srcdir("tm.jl"))
 include(srcdir("pi.jl"))
 include(srcdir("common.jl"))
