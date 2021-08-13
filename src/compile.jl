@@ -8,14 +8,14 @@ function compilePiTm(
     ID::AbstractString
 )
 
-    @info "$(Dates.now()) - Preallocating arrays ..."
+    @info "$(now()) - PiPWV - Preallocating arrays ..."
     nlon,nlat = ereg["size"]; nt = etime["End"] + 1 - etime["Begin"]; it = 0;
     eavg = zeros(nlon,nlat,nt); erng = zeros(nlon,nlat,nt);
     edhr = zeros(nlon,nlat,nt); eitr = zeros(nlon,nlat,nt); esea = zeros(nlon,nlat,nt);
     PiTm_avg = zeros(nlon,nlat); PiTm_var = zeros(nlon,nlat); PiTm_dhr = zeros(nlon,nlat);
     PiTm_sea = zeros(nlon,nlat); PiTm_ian = zeros(nlon,nlat); PiTm_itr = zeros(nlon,nlat);
 
-    @info "$(Dates.now()) - Extracting preliminarily-analyzed reanalysis data ..."
+    @info "$(now()) - PiPWV - Extracting preliminarily-analyzed reanalysis data ..."
     for yr = etime["Begin"] : etime["End"]
         it = it + 1;
         if !((ID == "RGA") && (yr == 1997));
@@ -71,7 +71,7 @@ function compilePiTm(
         end
     end
 
-    @info "$(Dates.now()) - Calculating yearly mean, and diurnal, seasonal and interannual variability ..."
+    @info "$(now()) - PiPWV - Calculating yearly mean, and diurnal, seasonal and interannual variability ..."
     for ilat = 1 : nlat, ilon = 1 : nlon
         PiTm_avg[ilon,ilat] = nanmean(@view eavg[ilon,ilat,:])
         PiTm_ian[ilon,ilat] = nanrange(@view eavg[ilon,ilat,:])

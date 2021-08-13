@@ -13,13 +13,13 @@ function PiTm(
 
     for dtii in datevec
 
-        @info "$(Dates.now()) - Extracting Tm data ..."
+        @info "$(now()) - PiPWV - Extracting Tm data ..."
         tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii); Tm = tvar[:]*1; close(tds);
 
-        @info "$(Dates.now()) - Calculating Askne and Nodius [1985] Pi data for $(dtii) ..."
+        @info "$(now()) - PiPWV - Calculating Askne and Nodius [1985] Pi data for $(dtii) ..."
         Pi = calcTm2Pi.(Tm);
 
-        @info "$(Dates.now()) - Saving Askne and Nodius [1985] Pi data for $(dtii) ..."
+        @info "$(now()) - PiPWV - Saving Askne and Nodius [1985] Pi data for $(dtii) ..."
         erarawsave(Pi,emod,epar,ereg,dtii,proot)
 
     end
@@ -36,11 +36,11 @@ function PiMN(
     nlon = ereg["size"][1]; nlat = ereg["size"][2];
     lat = ereg["lat"]; ehr = hrindy(emod);
 
-    global_logger(ConsoleLogger(stdout,Logging.Warn))
+    disable_logging(Logging.Info)
     zmod,zpar,_,_ = erainitialize(init,modID="dsfc",parID="z_sfc");
-    global_logger(ConsoleLogger(stdout,Logging.Info))
+    disable_logging(Logging.Debug)
 
-    @info "$(Dates.now()) - Extracting surface orography information ..."
+    @info "$(now()) - PiPWV - Extracting surface orography information ..."
     zds,zvar = erarawread(zmod,zpar,ereg,eroot,Date(2019,12));
     zs = mean(zvar[:]*1,dims=3); close(zds);
 
@@ -48,18 +48,18 @@ function PiMN(
 
     for dtii in datevec
 
-        @info "$(Dates.now()) - Preallocating arrays ..."
+        @info "$(now()) - PiPWV - Preallocating arrays ..."
         date = DateTime(dtii);
         dvec = collect(date:Hour(24/ehr):(date+Month(1))); pop!(dvec)
         ndt = length(dvec);
         Pi  = Array{Float32,3}(undef,nlon,nlat,ndt)
 
-        @info "$(Dates.now()) - Calculating Manandhar [2017] Pi data for $(dtii) ..."
+        @info "$(now()) - PiPWV - Calculating Manandhar [2017] Pi data for $(dtii) ..."
         for it = 1 : ndt, ilat = 1 : nlat, ilon = 1 : nlon
             Pi[ilon,ilat,it] = calcPiMN(lat[ilat],zs[ilon,ilat],dvec[it]);
         end
 
-        @info "$(Dates.now()) - Saving Manandhar Pi data for $(dtii) ..."
+        @info "$(now()) - PiPWV - Saving Manandhar Pi data for $(dtii) ..."
         erarawsave(Pi,emod,epar,ereg,dtii,proot)
 
     end
