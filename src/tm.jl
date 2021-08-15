@@ -220,3 +220,34 @@ function TmGGOSA(
     putinfo(emod,epar,ereg,etime,proot);
 
 end
+
+function TmMN(
+    emod::Dict, epar::Dict, ereg::Dict, etime::Dict, proot::Dict
+)
+
+    @info "$(now()) - PiPWV - Tm Calculation Method: Conversion from Pi calculated using Manandhar [2017]"
+
+    disable_logging(Logging.Info)
+    pmod,ppar,_,_ = erainitialize(init,modID="csfc",parID="Pi_EMN");
+    disable_logging(Logging.Debug)
+
+    datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
+
+    for dtii in datevec
+
+        @info "$(now()) - PiPWV - Extracting Manandhar [2017] Pi data for $(dtii) ..."
+        pds,pvar = erarawread(pmod,ppar,ereg,eroot,dtii); Π = pvar[:]*1; close(pds);
+
+        @info "$(now()) - PiPWV - Calculating Manandhar [2017] Tm data for $(dtii) ..."
+        Tm = calcPi2Tm(Pi)
+
+        @info "$(now()) - PiPWV - Saving Manandhar [2017] Tm data for $(dtii) ..."
+        erarawsave(Tm,emod,epar,ereg,dtii,proot)
+
+    end
+
+    putinfo(emod,epar,ereg,etime,proot);
+
+end
+
+calcPi2Tm(Pi::Real) = Pi * 461.5181 * 3.739 * 0.221

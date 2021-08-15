@@ -47,6 +47,11 @@ function runPiPWV(
     else; PiMN(emod,epar,ereg,etime,eroot,proot,init);
     end
 
+    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)",regID=regID)
+    if ID == "EMN"; TmMN(emod,epar,ereg,etime,eroot,proot,init) end
+
+    return
+
 end
 
 function anaPiPWV(
@@ -54,19 +59,12 @@ function anaPiPWV(
     ID::AbstractString,regID::AbstractString="GLB"
 )
 
-    if ID != "EMN"
-
-        emod,epar,ereg,etime = erainitialize(
-            init,
-            modID="csfc",parID="t_mwv_$(ID)",regID=regID
-        );
-        for yr = etime["Begin"] : etime["End"]
-            if !((ID == "RGA") && (yr == 1997)); eraanalysis(emod,epar,ereg,yr,eroot); end
-        end
-
+    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)",regID=regID)
+    for yr = etime["Begin"] : etime["End"]
+        if !((ID == "RGA") && (yr == 1997)); eraanalysis(emod,epar,ereg,yr,eroot); end
     end
 
-    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)",regID=regID);
+    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)",regID=regID)
     for yr = etime["Begin"] : etime["End"]
         if !((ID == "RGA") && (yr == 1997)); eraanalysis(emod,epar,ereg,yr,eroot); end
     end
@@ -79,16 +77,11 @@ function compilePiPWV(
 )
 
 
-    if ID != "EMN"
-        emod,epar,ereg,etime = erainitialize(
-            init,
-            modID="csfc",parID="t_mwv_$(ID)",regID=regID
-        );
-        lon = ereg["lon"]; lat = ereg["lat"]
-        Tm_avg,Tm_var,Tm_dhr,Tm_itr,Tm_sea,Tm_ian = compilePiTm(ID=ID,emod,epar,ereg,etime,eroot)
-        if !isdir(datadir("compiled")); mkpath(datadir("compiled")) end
-        @save datadir("compiled/Tm_$(ID).jld2") lon lat Tm_avg Tm_var Tm_dhr Tm_itr Tm_sea Tm_ian
-    end
+    emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)",regID=regID)
+    lon = ereg["lon"]; lat = ereg["lat"]
+    Tm_avg,Tm_var,Tm_dhr,Tm_itr,Tm_sea,Tm_ian = compilePiTm(ID=ID,emod,epar,ereg,etime,eroot)
+    if !isdir(datadir("compiled")); mkpath(datadir("compiled")) end
+    @save datadir("compiled/Tm_$(ID).jld2") lon lat Tm_avg Tm_var Tm_dhr Tm_itr Tm_sea Tm_ian
 
     emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="Pi_$(ID)",regID=regID);
     lon = ereg["lon"]; lat = ereg["lat"]

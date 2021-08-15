@@ -6,6 +6,7 @@ csfc,t_mwv_RGA,NA,NA,NA,Water Vapour Weighted Column Temperature,K
 csfc,t_mwv_EBB,NA,NA,NA,Water Vapour Weighted Column Temperature,K
 csfc,t_mwv_EBM,NA,NA,NA,Water Vapour Weighted Column Temperature,K
 csfc,t_mwv_EG2,NA,NA,NA,Water Vapour Weighted Column Temperature,K
+csfc,t_mwv_EMN,NA,NA,NA,Water Vapour Weighted Column Temperature,K
 csfc,Pi_RE5,NA,NA,NA,Pi Constant (ZWD to PWD),m/m
 csfc,Pi_REP,NA,NA,NA,Pi Constant (ZWD to PWD),m/m
 csfc,Pi_REI,NA,NA,NA,Pi Constant (ZWD to PWD),m/m
