@@ -1,3 +1,4 @@
+using Dates
 using ClimateERA
 using Logging
 
@@ -222,7 +223,7 @@ function TmGGOSA(
 end
 
 function TmMN(
-    emod::Dict, epar::Dict, ereg::Dict, etime::Dict, proot::Dict
+    emod::Dict, epar::Dict, ereg::Dict, etime::Dict, proot::Dict, init::Dict
 )
 
     @info "$(now()) - PiPWV - Tm Calculation Method: Conversion from Pi calculated using Manandhar [2017]"
@@ -236,7 +237,7 @@ function TmMN(
     for dtii in datevec
 
         @info "$(now()) - PiPWV - Extracting Manandhar [2017] Pi data for $(dtii) ..."
-        pds,pvar = erarawread(pmod,ppar,ereg,eroot,dtii); Π = pvar[:]*1; close(pds);
+        pds,pvar = erarawread(pmod,ppar,ereg,proot,dtii); Π = pvar[:]*1; close(pds);
 
         @info "$(now()) - PiPWV - Calculating Manandhar [2017] Tm data for $(dtii) ..."
         Tm = calcPi2Tm(Pi)

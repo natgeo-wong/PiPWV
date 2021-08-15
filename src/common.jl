@@ -48,7 +48,7 @@ function runPiPWV(
     end
 
     emod,epar,ereg,etime = erainitialize(init,modID="csfc",parID="t_mwv_$(ID)",regID=regID)
-    if ID == "EMN"; TmMN(emod,epar,ereg,etime,eroot,proot,init) end
+    if ID == "EMN"; TmMN(emod,epar,ereg,etime,proot,init) end
 
     return
 
