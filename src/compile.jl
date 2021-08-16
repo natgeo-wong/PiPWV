@@ -58,10 +58,10 @@ function compilePiTm(
             close(ds1); close(ds2)
 
             eds,evar = eraanaread(
-                "domain_yearly_mean_diurnalvariance",
+                "domain_yearly_mean_hourly",
                 emod,epar,ereg,eroot,Date(yr)
             )
-            edhr[:,:,it] = evar[:]
+            edhr[:,:,it] = maximum(evar[:],dims=3) .- minimum(evar[:],dims=3)
             close(eds)
 
             erng[:,:,it] = erng[:,:,it] .- (esea[:,:,it] .+ eitr[:,:,it])
