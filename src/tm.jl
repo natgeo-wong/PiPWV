@@ -240,7 +240,7 @@ function TmMN(
         pds,pvar = erarawread(pmod,ppar,ereg,proot,dtii); Π = pvar[:]*1; close(pds);
 
         @info "$(now()) - PiPWV - Calculating Manandhar [2017] Tm data for $(dtii) ..."
-        Tm = calcPi2Tm(Pi)
+        Tm = calcPi2Tm.(Π)
 
         @info "$(now()) - PiPWV - Saving Manandhar [2017] Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)
