@@ -251,4 +251,4 @@ function TmMN(
 
 end
 
-calcPi2Tm(Pi::Real) = Pi * 461.5181 * 3.739 * 0.221
+calcPi2Tm(Pi::Real) = 3.739e3 / (10^3/(Pi * 461.5181) - 0.221)
