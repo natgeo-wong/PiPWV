@@ -12,7 +12,7 @@ function plotaxs(ID::AbstractString)
     @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
     Tm_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr
 
-    coast = readdlm(srcdir("GLB-i.txt"),comments=true,comment_char='#')
+    coast = readdlm(srcdir("GLB-l.txt"),comments=true,comment_char='#')
     x = coast[:,1]; y = coast[:,2];
 
     f,axs = pplt.subplots(ncols=2,nrows=2,axwidth=3,aspect=15/7)
@@ -48,7 +48,7 @@ function plotaxs2(ID::AbstractString)
     @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
     Tm_tot = Tm_sea + Tm_itr
 
-    coast = readdlm(srcdir("GLB-i.txt"),comments=true,comment_char='#')
+    coast = readdlm(srcdir("GLB-l.txt"),comments=true,comment_char='#')
     x = coast[:,1]; y = coast[:,2];
 
     pplt.close(); proj = pplt.Proj("robin",lon_0=180)
@@ -76,7 +76,6 @@ end
 
 plotaxs("RE5");
 plotaxs("REP"); plotaxs("REI"); plotaxs("RGA")
-plotaxs("EBB"); plotaxs("EBM");
-# plottwoaxs("EBB","EBM")
+plotaxs("EBB"); plotaxs("EBM")
 plotaxs2("EG2");
-# plotaxs2("EMN")
+plotaxs2("EMN")

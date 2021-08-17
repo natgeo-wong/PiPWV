@@ -41,16 +41,16 @@ c = axs[4].contourf(
 axs[4].format(title=L"(d) $\delta_i$ (REP-RE5) / $10^{-2}$ K",coast=true)
 
 c = axs[5].contourf(
-    lon,lat,(Tm_dhr.-R5_dhr)'*1000,
+    lon,lat,(Tm_dhr.-R5_dhr)'*100,
     cmap="RdBu_r",levels=vcat(-5:-1,-0.5,0.5,1:5),extend="both"
 )
-axs[5].format(title=L"(e) $\delta_d$ (REP-RE5) / $10^{-3}$ K",coast=true)
+axs[5].format(title=L"(e) $\delta_d$ (REP-RE5) / $10^{-2}$ K",coast=true)
 
 c = axs[6].contourf(
-    lon,lat,(Tm_ian.-R5_ian)'*1000,
+    lon,lat,(Tm_ian.-R5_ian)'*100,
     cmap="RdBu_r",levels=vcat(-5:-1,-0.5,0.5,1:5),extend="both"
 )
-axs[6].format(title=L"(f) $\delta_a$ (REP-RE5) / $10^{-3}$ K",coast=true)
+axs[6].format(title=L"(f) $\delta_a$ (REP-RE5) / $10^{-2}$ K",coast=true)
 
 f.colorbar(c,loc="r",extend="both")
 f.savefig(plotsdir("PvZ.png"),transparent=false,dpi=200)

@@ -82,4 +82,4 @@ plotaxs("RE5");
 plotaxs("REP"); plotaxs("REI"); plotaxs("RGA")
 plotaxs("EBB"); plotaxs("EBM");
 plotaxs2("EG2");
-# plotaxs2("EMN")
+plotaxs2("EMN")

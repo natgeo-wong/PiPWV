@@ -18,7 +18,7 @@ function plotaxs(ID::AbstractString)
 
     pplt.close(); proj = pplt.Proj("robin",lon_0=180)
     f,axs = pplt.subplots(ncols=2,nrows=3,axwidth=3,proj=proj)
-    lvls  = vcat(-10,-5:-1,-0.5,0.5,1:5,10)
+    lvls  = vcat(-5:-1,-0.5,0.5,1:5)*2
 
     c = axs[1].contourf(lon,lat,(Tm_avg.-R5_avg)',cmap="RdBu_r",levels=lvls,extend="both")
     axs[1].format(title=L"(a) $\mu$ " * "($ID-RE5) / K",coast=true)
@@ -76,4 +76,5 @@ end
 
 plotaxs("REI"); plotaxs("RGA")
 plotaxs("EBB"); plotaxs("EBM");
-plotaxs2("EG2");
+plotaxs2("EG2")
+plotaxs2("EMN")

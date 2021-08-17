@@ -22,11 +22,11 @@ function plotaxs(ID::AbstractString)
     axs[2].format(title=L"(b) $\delta_i$ / $\delta_t$",coast=true)
     axs[2].colorbar(c,loc="r",extend="both")
 
-    c = axs[3].contourf(lon,lat,(Tm_dhr./Tm_tot)'*100,levels=(1:0.5:9)*5,extend="both")
+    c = axs[3].contourf(lon,lat,(Tm_dhr./Tm_tot)'*100,levels=(1:0.5:9)*10,extend="both")
     axs[3].format(title=L"(c) $\delta_d$ / $\delta_t$",coast=true)
     axs[3].colorbar(c,loc="r",extend="both")
 
-    c = axs[4].contourf(lon,lat,(Tm_ian./Tm_tot)'*100,levels=(1:0.5:9)*5,extend="both")
+    c = axs[4].contourf(lon,lat,(Tm_ian./Tm_tot)'*100,levels=(1:0.5:9)*10,extend="both")
     axs[4].format(title=L"(d) $\delta_a$ / $\delta_t$",coast=true)
     axs[4].colorbar(c,loc="r",extend="both")
 
@@ -65,6 +65,5 @@ end
 plotaxs("RE5");
 plotaxs("REP"); plotaxs("REI"); plotaxs("RGA")
 plotaxs("EBB"); plotaxs("EBM");
-# plottwoaxs("EBB","EBM")
 plotaxs2("EG2");
-# plotaxs2("EMN")
+plotaxs2("EMN")
