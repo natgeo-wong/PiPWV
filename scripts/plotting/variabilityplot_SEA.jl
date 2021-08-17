@@ -10,12 +10,12 @@ pplt = pyimport("proplot");
 function plotaxs(ID::AbstractString)
 
     @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
-    Tm_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr
+    Tm_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr + Tm_var
 
     coast = readdlm(srcdir("GLB-l.txt"),comments=true,comment_char='#')
     x = coast[:,1]; y = coast[:,2];
 
-    f,axs = pplt.subplots(ncols=2,nrows=2,axwidth=3,aspect=15/7)
+    pplt.close(); f,axs = pplt.subplots(ncols=2,nrows=2,axwidth=3,aspect=15/7)
 
     c = axs[1].contourf(lon,lat,(Tm_sea./Tm_tot)'*100,levels=(1:9)*10,extend="both")
     axs[1].format(title=L"(a) $\delta_s$ / $\delta_t$")
@@ -46,7 +46,7 @@ end
 function plotaxs2(ID::AbstractString)
 
     @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
-    Tm_tot = Tm_sea + Tm_itr
+    Tm_tot = Tm_sea + Tm_itr + Tm_var
 
     coast = readdlm(srcdir("GLB-l.txt"),comments=true,comment_char='#')
     x = coast[:,1]; y = coast[:,2];
@@ -74,8 +74,11 @@ function plotaxs2(ID::AbstractString)
 
 end
 
-plotaxs("RE5");
-plotaxs("REP"); plotaxs("REI"); plotaxs("RGA")
-plotaxs("EBB"); plotaxs("EBM")
-plotaxs2("EG2");
+plotaxs("RE5")
+plotaxs("REP")
+plotaxs("REI")
+plotaxs("RGA")
+plotaxs("EBB")
+plotaxs("EBM")
+plotaxs2("EG2")
 plotaxs2("EMN")

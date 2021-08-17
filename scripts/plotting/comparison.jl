@@ -8,13 +8,13 @@ pplt = pyimport("proplot");
 
 function plotaxs(ID::AbstractString)
 
-    @load datadir("compiled/Tm_RE5.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr
+    @load datadir("compiled/Tm_RE5.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
     R5_avg = Tm_avg; R5_dhr = Tm_dhr; R5_sea = Tm_sea;
     R5_ian = Tm_ian; R5_itr = Tm_itr;
 
-    R5_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr
-    @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr
-    Tm_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr
+    R5_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr + Tm_var
+    @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
+    Tm_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr + Tm_var
 
     pplt.close(); proj = pplt.Proj("robin",lon_0=180)
     f,axs = pplt.subplots(ncols=2,nrows=3,axwidth=3,proj=proj)
@@ -45,17 +45,16 @@ end
 
 function plotaxs2(ID::AbstractString)
 
-    @load datadir("compiled/Tm_RE5.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr
-    R5_avg = Tm_avg; R5_dhr = Tm_dhr; R5_sea = Tm_sea;
-    R5_ian = Tm_ian; R5_itr = Tm_itr;
-    R5_tot = Tm_sea + Tm_itr
+    @load datadir("compiled/Tm_RE5.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
+    R5_avg = Tm_avg; R5_sea = Tm_sea; R5_itr = Tm_itr;
+    R5_tot = Tm_sea + Tm_itr + Tm_var
 
-    @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr
-    Tm_tot = Tm_sea + Tm_itr
+    @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
+    Tm_tot = Tm_sea + Tm_itr + Tm_var
 
     pplt.close(); proj = pplt.Proj("robin",lon_0=180)
     f,axs = pplt.subplots(ncols=2,nrows=2,axwidth=3,proj=proj)
-    lvls  = vcat(-10,-5:-1,-0.5,0.5,1:5,10)
+    lvls  = vcat(-5:-1,-0.5,0.5,1:5)*2
 
     c = axs[1].contourf(lon,lat,(Tm_avg.-R5_avg)',cmap="RdBu_r",levels=lvls,extend="both")
     axs[1].format(title=L"(a) $\mu$ " * "($ID-RE5) / K",coast=true)
@@ -74,7 +73,9 @@ function plotaxs2(ID::AbstractString)
 
 end
 
-plotaxs("REI"); plotaxs("RGA")
-plotaxs("EBB"); plotaxs("EBM");
+plotaxs("REI")
+plotaxs("RGA")
+plotaxs("EBB")
+plotaxs("EBM")
 plotaxs2("EG2")
 plotaxs2("EMN")

@@ -9,7 +9,7 @@ pplt = pyimport("proplot");
 function plotaxs(ID::AbstractString)
 
     @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
-    Tm_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr
+    Tm_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr + + Tm_var
 
     pplt.close(); proj = pplt.Proj("robin",lon_0=180)
     f,axs = pplt.subplots(ncols=2,nrows=2,axwidth=3,proj=proj)
@@ -41,7 +41,7 @@ end
 function plotaxs2(ID::AbstractString)
 
     @load datadir("compiled/Tm_$ID.jld2") lon lat Tm_avg Tm_dhr Tm_sea Tm_ian Tm_itr Tm_var
-    Tm_tot = Tm_sea + Tm_itr
+    Tm_tot = Tm_sea + Tm_itr + + Tm_var
 
     pplt.close(); proj = pplt.Proj("robin",lon_0=180)
     f,axs = pplt.subplots(ncols=2,nrows=1,axwidth=3,proj=proj)
@@ -62,8 +62,11 @@ function plotaxs2(ID::AbstractString)
 
 end
 
-plotaxs("RE5");
-plotaxs("REP"); plotaxs("REI"); plotaxs("RGA")
-plotaxs("EBB"); plotaxs("EBM");
-plotaxs2("EG2");
+plotaxs("RE5")
+plotaxs("REP")
+plotaxs("REI")
+plotaxs("RGA")
+plotaxs("EBB")
+plotaxs("EBM")
+plotaxs2("EG2")
 plotaxs2("EMN")
