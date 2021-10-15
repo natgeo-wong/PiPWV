@@ -62,11 +62,11 @@ function plotaxs2(ID::AbstractString)
 
 end
 
-plotaxs("RE5")
-plotaxs("REP")
-plotaxs("REI")
-plotaxs("RGA")
-plotaxs("EBB")
-plotaxs("EBM")
-plotaxs2("EG2")
-plotaxs2("EMN")
+plotaxs("ERA5")
+plotaxs("ERA5P")
+plotaxs("ERAI")
+plotaxs("GGOSA")
+plotaxs("Bevis")
+# plotaxs("EBM");
+plotaxs2("GPT2w")
+plotaxs2("MN2017")
