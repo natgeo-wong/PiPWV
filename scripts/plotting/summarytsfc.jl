@@ -29,7 +29,7 @@ axs[1].plot(x,y,lw=0.5,linestyle="--",c="w")
 axs[1].format(title=L"(a) $\mu$",coast=true)
 axs[1].colorbar(c,loc="r",extend="both")
 
-c = axs[2].contourf(lon,lat,tot',levels=(2:0.5:10)*10,extend="both")
+c = axs[2].contourf(lon,lat,tot',levels=(1:0.5:10)*10,extend="both")
 axs[2].format(title=L"(b) $\delta_t$",coast=true)
 axs[2].colorbar(c,loc="r",extend="both")
 
@@ -45,7 +45,7 @@ c = axs[5].contourf(lon,lat,dhr',levels=(1:10),extend="both")
 axs[5].format(title=L"(e) $\delta_d$",coast=true)
 axs[5].colorbar(c,loc="r",extend="both")
 
-c = axs[6].contourf(lon,lat,ian',levels=(1:0.5:9),extend="both")
+c = axs[6].contourf(lon,lat,ian',levels=(1:10),extend="both")
 axs[6].format(title=L"(f) $\delta_a$",coast=true)
 axs[6].colorbar(c,loc="r",extend="both")
 

@@ -22,7 +22,7 @@ function plotaxs(ID::AbstractString)
     axs[1].format(title=L"(a) $\mu$",coast=true)
     axs[1].colorbar(c,loc="r",extend="both")
 
-    c = axs[2].contourf(lon,lat,Tm_tot',levels=(2:0.5:10)*10,extend="both")
+    c = axs[2].contourf(lon,lat,Tm_tot',levels=(1:0.5:10)*10,extend="both")
     axs[2].format(title=L"(b) $\delta_t$",coast=true)
     axs[2].colorbar(c,loc="r",extend="both")
 
@@ -38,7 +38,7 @@ function plotaxs(ID::AbstractString)
     axs[5].format(title=L"(e) $\delta_d$",coast=true)
     axs[5].colorbar(c,loc="r",extend="both")
 
-    c = axs[6].contourf(lon,lat,Tm_ian',levels=(1:0.5:9),extend="both")
+    c = axs[6].contourf(lon,lat,Tm_ian',levels=(1:10),extend="both")
     axs[6].format(title=L"(f) $\delta_a$",coast=true)
     axs[6].colorbar(c,loc="r",extend="both")
 
@@ -83,10 +83,10 @@ function plotaxs2(ID::AbstractString)
 end
 
 plotaxs("ERA5")
-# plotaxs("ERA5P")
-# plotaxs("ERAI")
-# plotaxs("GGOSA")
-# plotaxs("Bevis")
-# # plotaxs("EBM");
-# plotaxs2("GPT2w")
-# plotaxs2("MN2017")
+plotaxs("ERA5P")
+plotaxs("ERAI")
+plotaxs("GGOSA")
+plotaxs("Bevis")
+plotaxs("EBM");
+plotaxs2("GPT2w")
+plotaxs2("MN2017")
