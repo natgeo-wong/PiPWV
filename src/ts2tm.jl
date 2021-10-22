@@ -21,6 +21,8 @@ function findts2tm(
     nhr   = length(dtbeg:Day(1):dtend) * 24
     Tmvec = ones(nlon,nhr)
     Tsvec = ones(nlon,nhr,2)
+    tmp1  = zeros(Int16,nlon,31*24)
+    tmp2  = zeros(Int16,nlon,31*24)
     amat  = zeros(nlon,nlat)
     bmat  = zeros(nlon,nlat)
 
@@ -37,14 +39,21 @@ function findts2tm(
             dtiib = Date(yri,moi,1)
             dtiie = Date(yri,moi,ndyii)
 
-            ibeg  =  (dtiib - dtbeg).value * 24 + 1
-            iend  = ((dtiie - dtbeg).value + 1) * 24
+            ibeg  =  (dtiib - dtbeg).value * 24 + 1; @info ibeg
 
             tmds,tmvar = erarawread(tmmod,tmpar,reg,tmroot,dtii)
             tsds,tsvar = erarawread(tsmod,tspar,reg,tsroot,dtii)
 
-            NCDatasets.load!(tmvar.var,Tmvec[:,ibeg:iend],  :,ilat,:)
-            NCDatasets.load!(tsvar.var,Tsvec[:,ibeg:iend,1],:,ilat,:)
+            tmscale = tmvar.attrib["scale_factor"]; tmoff = tmvar.attrib["add_offset"]
+            tsscale = tsvar.attrib["scale_factor"]; tsoff = tsvar.attrib["add_offset"]
+
+            NCDatasets.load!(tmvar.var,tmp1[:,1:(ndyii*24)],:,ilat,:)
+            NCDatasets.load!(tsvar.var,tmp2[:,1:(ndyii*24)],:,ilat,:)
+
+            for ihr = 1 : (ndyii*24), ilon = 1 : nlon
+                Tmvec[ilon,ibeg+ihr-1]   = tmp1[ilon,ihr] * tmscale + tmoff
+                Tsvec[ilon,ibeg+ihr-1,1] = tmp2[ilon,ihr] * tsscale + tsoff
+            end
             
             close(tmds)
             close(tsds)
@@ -55,7 +64,7 @@ function findts2tm(
 
         for ilon = 1 : nlon
 
-            fsol = (@view Tsvec[ilon,:,:]) \ @view (Tmvec[ilon,:])
+            fsol = (@view Tsvec[ilon,:,:]) \ (@view Tmvec[ilon,:])
             amat[ilon,iat] = fsol[1]
             bmat[ilon,iat] = fsol[2]
 
