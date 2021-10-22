@@ -7,11 +7,12 @@ using NCDatasets
 function findts2tm(
     init   :: Dict,
     tmroot :: Dict,
-    tsroot :: Dict
+    tsroot :: Dict,
+    timeID :: Vector{Int}
 )
 
-    tmmod,tmpar,reg,dt = erainitialize(init,modID="csfc",parID="t_mwv_RE5",timeID=[1979,2019]);
-    tsmod,tspar,_,_    = erainitialize(init,modID="dsfc",parID="t_sfc",timeID=[1979,2019]);
+    tmmod,tmpar,reg,dt = erainitialize(init,modID="csfc",parID="t_mwv_RE5",timeID=timeID);
+    tsmod,tspar,_,_    = erainitialize(init,modID="dsfc",parID="t_sfc",timeID=timeID);
 
     nlon  = reg["size"][1]; lon = reg["lon"];
     nlat  = reg["size"][2]; lat = reg["lat"];
@@ -37,9 +38,8 @@ function findts2tm(
             ndyii = daysinmonth(dtii)
 
             dtiib = Date(yri,moi,1)
-            dtiie = Date(yri,moi,ndyii)
 
-            ibeg  =  (dtiib - dtbeg).value * 24 + 1; @info ibeg
+            ibeg  =  (dtiib - dtbeg).value * 24 + 1
 
             tmds,tmvar = erarawread(tmmod,tmpar,reg,tmroot,dtii)
             tsds,tsvar = erarawread(tsmod,tspar,reg,tsroot,dtii)
@@ -65,13 +65,13 @@ function findts2tm(
         for ilon = 1 : nlon
 
             fsol = (@view Tsvec[ilon,:,:]) \ (@view Tmvec[ilon,:])
-            amat[ilon,iat] = fsol[1]
-            bmat[ilon,iat] = fsol[2]
+            amat[ilon,ilat] = fsol[1]
+            bmat[ilon,ilat] = fsol[2]
 
         end
 
     end
 
-    @save datadir("Ts2Tm.jld2") a b reg
+    @save datadir("Ts2Tm.jld2") amat bmat reg
 
 end
