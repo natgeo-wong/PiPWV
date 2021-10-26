@@ -199,7 +199,7 @@ function TmLinear(
     ID = split(epar["ID"],"_")[end]; lat = ereg["lat"]
 
     @info "$(now()) - PiPWV - Retrieving (a,b) matrix at 1.0º resolution ..."
-    @load datadir("Ts2Tm.jld2") a b
+    @load datadir("Ts2Tm.jld2") amat bmat
 
     disable_logging(Logging.Info)
     tmod,tpar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
@@ -213,7 +213,7 @@ function TmLinear(
         tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii); Ts = tvar[:]*1; close(tds);
 
         @info "$(now()) - PiPWV - Calculating Bevis Tm data for $(dtii) ..."
-        Tm = a .+ b .* Ts;
+        Tm = amat .+ bmat .* Ts;
 
         @info "$(now()) - PiPWV - Saving Bevis Tm data for $(dtii) ..."
         erarawsave(Tm,emod,epar,ereg,dtii,proot)
