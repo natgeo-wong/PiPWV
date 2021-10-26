@@ -35,6 +35,7 @@ function runPiPWV(
         if     ID == "RE5";               TmDavisz(emod,epar,ereg,etime,eroot,proot,init);
         elseif any(ID .== ["REP","REI"]); TmDavisp(emod,epar,ereg,etime,eroot,proot,init);
         elseif any(ID .== ["EBB","EBM"]); TmBevis(emod,epar,ereg,etime,eroot,proot,init);
+        elseif ID == "linear";            TmLinear(emod,epar,ereg,etime,eroot,proot,init);
         elseif ID == "EG2";               TmGPT2w(emod,epar,ereg,etime,eroot,proot,init);
         elseif ID == "RGA";               TmGGOSA(emod,epar,ereg,etime,proot);
         end

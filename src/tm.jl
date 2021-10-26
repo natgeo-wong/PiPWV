@@ -1,5 +1,6 @@
 using Dates
 using ClimateERA
+using JLD2
 using Logging
 
 include(srcdir("davis.jl"));
@@ -176,6 +177,40 @@ function TmBevis(
         @info "$(now()) - PiPWV - Extracting Surface Temperature data for $(dtii) ..."
         tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii); Ts = tvar[:]*1; close(tds);
         Tm = deepcopy(Ts);
+
+        @info "$(now()) - PiPWV - Calculating Bevis Tm data for $(dtii) ..."
+        Tm = a .+ b .* Ts;
+
+        @info "$(now()) - PiPWV - Saving Bevis Tm data for $(dtii) ..."
+        erarawsave(Tm,emod,epar,ereg,dtii,proot)
+
+    end
+
+    putinfo(emod,epar,ereg,etime,proot);
+
+end
+
+function TmLinear(
+    emod::Dict, epar::Dict, ereg::Dict, etime::Dict,
+    eroot::Dict, proot::Dict, init::Dict
+)
+
+    @info "$(now()) - PiPWV - Tm Calculation Method: Linear Approximation"
+    ID = split(epar["ID"],"_")[end]; lat = ereg["lat"]
+
+    @info "$(now()) - PiPWV - Retrieving (a,b) matrix at 1.0º resolution ..."
+    @load datadir("Ts2Tm.jld2") a b
+
+    disable_logging(Logging.Info)
+    tmod,tpar,_,_ = erainitialize(init,modID="dsfc",parID="t_sfc");
+    disable_logging(Logging.Debug)
+
+    datevec = collect(Date(etime["Begin"],1):Month(1):Date(etime["End"],12));
+
+    for dtii in datevec
+
+        @info "$(now()) - PiPWV - Extracting Surface Temperature data for $(dtii) ..."
+        tds,tvar = erarawread(tmod,tpar,ereg,eroot,dtii); Ts = tvar[:]*1; close(tds);
 
         @info "$(now()) - PiPWV - Calculating Bevis Tm data for $(dtii) ..."
         Tm = a .+ b .* Ts;

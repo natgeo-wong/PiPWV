@@ -47,12 +47,12 @@ function findts2tm(
             tmscale = tmvar.attrib["scale_factor"]; tmoff = tmvar.attrib["add_offset"]
             tsscale = tsvar.attrib["scale_factor"]; tsoff = tsvar.attrib["add_offset"]
 
-            NCDatasets.load!(tmvar.var,tmp1[:,1:(ndyii*24)],:,ilat,:)
-            NCDatasets.load!(tsvar.var,tmp2[:,1:(ndyii*24)],:,ilat,:)
+            NCDatasets.load!(tmvar.var,@view tmp1[:,1:(ndyii*24)],:,ilat,:)
+            NCDatasets.load!(tsvar.var,@view tmp2[:,1:(ndyii*24)],:,ilat,:)
 
             for ihr = 1 : (ndyii*24), ilon = 1 : nlon
                 Tmvec[ilon,ibeg+ihr-1]   = tmp1[ilon,ihr] * tmscale + tmoff
-                Tsvec[ilon,ibeg+ihr-1,1] = tmp2[ilon,ihr] * tsscale + tsoff
+                Tsvec[ilon,ibeg+ihr-1,2] = tmp2[ilon,ihr] * tsscale + tsoff
             end
             
             close(tmds)
