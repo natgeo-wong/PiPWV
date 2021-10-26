@@ -66,6 +66,7 @@ plotaxs("ERA5")
 plotaxs("ERA5P")
 plotaxs("ERAI")
 plotaxs("GGOSA")
+plotaxs("Linear")
 plotaxs("Bevis")
 # plotaxs("EBM");
 plotaxs2("GPT2w")

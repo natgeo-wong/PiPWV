@@ -26,11 +26,11 @@ function plotaxs(ID::AbstractString)
     axs[2].format(title=L"(b) $\delta_t$",coast=true)
     axs[2].colorbar(c,loc="r",extend="both")
 
-    c = axs[3].contourf(lon,lat,Tm_sea',levels=(1:0.5:9)*5,extend="both")
+    c = axs[3].contourf(lon,lat,Tm_sea',levels=(1:9)*5,extend="both")
     axs[3].format(title=L"(c) $\delta_s$",coast=true)
     axs[3].colorbar(c,loc="r",extend="both")
 
-    c = axs[4].contourf(lon,lat,Tm_itr',levels=(1:0.5:9)*5,extend="both")
+    c = axs[4].contourf(lon,lat,Tm_itr',levels=(1:9)*5,extend="both")
     axs[4].format(title=L"(d) $\delta_i$",coast=true)
     axs[4].colorbar(c,loc="r",extend="both")
 
@@ -86,6 +86,7 @@ plotaxs("ERA5")
 plotaxs("ERA5P")
 plotaxs("ERAI")
 plotaxs("GGOSA")
+plotaxs("Linear")
 plotaxs("Bevis")
 plotaxs("EBM");
 plotaxs2("GPT2w")

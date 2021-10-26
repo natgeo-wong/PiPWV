@@ -75,6 +75,7 @@ end
 
 plotaxs("ERAI")
 plotaxs("GGOSA")
+plotaxs("Linear")
 plotaxs("Bevis")
 plotaxs2("GPT2w")
 plotaxs2("MN2017")
