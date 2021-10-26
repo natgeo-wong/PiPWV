@@ -24,18 +24,18 @@ clvls = (1:9)*10
 dlvls = vcat(-5:-1,-0.5,0.5,1:5)*10
 
 c = axs[1].contourf(lon,lat,(Tm_sea./Tm_tot)'*100,levels=clvls,extend="both")
-axs[1].format(title=L"ERA5 $T_m$")
+axs[1].format(title=L"$T_m$")
 axs[1].format(leftlabels=[L"$\delta_s/\delta_t$",L"$\delta_i/\delta_t$",L"$\delta_d/\delta_t$",L"$\delta_a/\delta_t$"])
-f.colorbar(c,loc="l",extend="both")
+f.colorbar(c,loc="l",label="%",rows=[2,3])
 
 axs[2].contourf(lon,lat,(Ts_sea./Ts_tot)'*100,levels=clvls,extend="both")
-axs[2].format(title=L"ERA5 $T_s$")
+axs[2].format(title=L"$T_{la}$")
 
 axs[3].contourf(
     lon,lat,(Ts_sea./Ts_tot .- Tm_sea./Tm_tot)'*100,cmap="RdBu_r",
     levels=dlvls,extend="both"
 )
-axs[3].format(title=L"ERA5 $T_s$ - ERA5 $T_m$")
+axs[3].format(title=L"$T_{la}$ - $T_m$")
 
 axs[4].contourf(lon,lat,(Tm_itr./Tm_tot)'*100,levels=clvls,extend="both")
 axs[5].contourf(lon,lat,(Ts_itr./Ts_tot)'*100,levels=clvls,extend="both")
@@ -65,5 +65,5 @@ for ax in axs
     ax.format(coast=true,ultitle="($(alp[i]))")
 end
 
-f.colorbar(c,loc="r",extend="both")
+f.colorbar(c,loc="r",label="%",rows=[2,3])
 f.savefig(plotsdir("Tmdiff_TsTm.png"),transparent=false,dpi=200)
