@@ -18,18 +18,18 @@ Tm_tot = Tm_dhr + Tm_ian + Tm_sea + Tm_itr + Tm_var
 pplt.close(); proj = pplt.Proj("robin",lon_0=180)
 f,axs = pplt.subplots(ncols=3,nrows=6,axwidth=2,proj=proj,sharey=0)
 clvls = (1:9)*10
-dlvls = vcat(-5:-1,-0.5,0.5,1:5)*2
+dlvls = vcat(-10,-5,-2,-1,-0.5,0.5,1,2,5,10)
 
 c = axs[1].contourf(lon,lat,R5_avg',levels=levels=270:2.5:290,extend="both")
-axs[1].format(title=L"$T_m$")
+axs[1].format(title=L"(a) $T_m$")
 # axs[1].format(leftlabels=[L"$\mu$",L"$\delta_t$",L"$\delta_s$",L"$\delta_i$",L"$\delta_d$",L"$\delta_a$"])
 axs[1].colorbar(c,loc="l",label=L"$\mu$ / K")
 
 axs[2].contourf(lon,lat,Tm_avg',levels=levels=270:2.5:290,extend="both")
-axs[2].format(title=L"$T_{la}$")
+axs[2].format(title=L"(b) $\hat{T}_m$")
 
 axs[3].contourf(lon,lat,(Tm_avg.-R5_avg)',cmap="RdBu_r",levels=dlvls,extend="both")
-axs[3].format(title=L"$T_{la}$ - $T_m$")
+axs[3].format(title=L"(c) $\hat{T}_m - T_m$")
 
 c = axs[4].contourf(lon,lat,R5_tot',levels=(1:9)*10,extend="both")
 axs[5].contourf(lon,lat,Tm_tot',levels=(1:10)*10,extend="both")
@@ -56,11 +56,8 @@ axs[17].contourf(lon,lat,Tm_ian',levels=(1:10),extend="both")
 cd = axs[18].contourf(lon,lat,(Tm_ian.-R5_ian)',cmap="RdBu_r",levels=dlvls,extend="both")
 axs[16].colorbar(c,loc="l",label=L"$\delta_a$ / K")
 
-i = 0
-alp = "abcdefghijklmnopqrstuv"
 for ax in axs
-    global i += 1
-    ax.format(coast=true,ultitle="($(alp[i]))")
+    ax.format(coast=true)
 end
 
 f.colorbar(cd,loc="r",label="K",rows=[3,4])
